@@ -76,4 +76,46 @@
     </script>
 
 </body>
+</html>            background-color: #0066cc;
+            color: white;
+            transition: transform 0.1s, background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #004c99;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HTML: Se encarga de la estructura y el contenido -->
+    <h1>¡Hola, Mundo!</h1>
+    <p>Haz clic en el botón para ver la magia de JavaScript.</p>
+    <button id="botonTema">Activar Modo Oscuro</button>
+
+    <!-- JavaScript: Se encarga de la lógica y la interactividad -->
+    <script>
+        // 1. Seleccionamos los elementos de la página
+        const boton = document.getElementById('botonTema');
+        const cuerpoPagina = document.body;
+
+        // 2. Le decimos al botón qué hacer cuando alguien haga clic en él
+        boton.addEventListener('click', function() {
+            // Alternamos la clase 'modo-oscuro' en el cuerpo de la página
+            cuerpoPagina.classList.toggle('modo-oscuro');
+
+            // 3. Cambiamos el texto del botón dependiendo del modo actual
+            if (cuerpoPagina.classList.contains('modo-oscuro')) {
+                boton.textContent = 'Activar Modo Claro';
+            } else {
+                boton.textContent = 'Activar Modo Oscuro';
+            }
+        });
+    </script>
+
+</body>
 </html>
