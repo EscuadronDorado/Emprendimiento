@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOLA MUNDO - NIVEL DIOS</title>
+    <title>HOLA MUNDO - MULTIVERSO</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Space+Mono&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #050505;
-            --card-bg: rgba(10, 10, 20, 0.6);
-            --card-border: rgba(0, 255, 255, 0.3);
+            --bg-color: #000000;
+            --card-bg: rgba(10, 15, 30, 0.6);
+            --card-border: rgba(0, 255, 255, 0.4);
             --text-main: #ffffff;
             --neon-glow: #00ffff;
-            --neon-glow-alt: #ff00ff;
-            --particle-color: 0, 255, 255;
+            --neon-glow-alt: #ff0055;
+            --ui-color: #00ffff;
         }
 
+        /* Tema Alternativo (Modo Sobrecarga) */
         [data-theme="light"] {
-            --bg-color: #f0f4f8;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --card-border: rgba(255, 0, 128, 0.5);
-            --text-main: #0f0f0f;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 0, 128, 0.8);
+            --text-main: #050505;
             --neon-glow: #ff007f;
             --neon-glow-alt: #0055ff;
-            --particle-color: 255, 0, 127;
+            --ui-color: #ff007f;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,406 +38,376 @@
             align-items: center;
             overflow: hidden;
             font-family: 'Space Mono', monospace;
-            transition: background-color 0.8s ease;
-            cursor: none; /* Ocultamos el cursor real */
+            cursor: none; 
+            user-select: none;
         }
 
-        /* === CURSOR PERSONALIZADO === */
+        /* === CURSOR === */
         #cursor-anillo {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--neon-glow);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, border-color 0.5s;
-            z-index: 9999;
-            box-shadow: 0 0 15px var(--neon-glow);
+            position: fixed; width: 40px; height: 40px;
+            border: 2px solid var(--ui-color); border-radius: 50%;
+            pointer-events: none; transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.3s;
+            z-index: 9999; box-shadow: 0 0 15px var(--ui-color);
         }
         #cursor-punto {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: var(--text-main);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
+            position: fixed; width: 6px; height: 6px;
+            background: var(--text-main); border-radius: 50%;
+            pointer-events: none; transform: translate(-50%, -50%);
             z-index: 10000;
         }
 
-        /* === FONDO CANVAS (PARTÍCULAS) === */
+        /* === FLECHAS DE NAVEGACIÓN DIMENSIONAL === */
+        .flecha {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            font-size: 3rem; color: rgba(255,255,255,0.3);
+            cursor: none; z-index: 100; padding: 20px;
+            text-shadow: 0 0 10px transparent;
+            transition: all 0.3s ease;
+        }
+        .flecha-izq { left: 20px; }
+        .flecha-der { right: 20px; }
+        
+        .flecha:hover {
+            color: var(--ui-color);
+            text-shadow: 0 0 20px var(--ui-color);
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        /* === FONDO CANVAS === */
         #lienzo-fondo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; z-index: 0;
         }
 
         /* === CONTENEDOR 3D === */
-        .perspectiva {
-            perspective: 1500px;
-            z-index: 10;
-        }
+        .perspectiva { perspective: 1500px; z-index: 10; }
 
         .tarjeta-dios {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 2px solid var(--card-border);
-            border-radius: 20px;
-            padding: 60px;
-            text-align: center;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(var(--particle-color), 0.1);
+            background: var(--card-bg); backdrop-filter: blur(15px);
+            border: 2px solid var(--card-border); border-radius: 20px;
+            padding: 60px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 255, 255, 0.1);
             transform-style: preserve-3d;
-            transition: transform 0.1s ease-out, box-shadow 0.5s, border-color 0.5s;
-            /* Entrada inicial */
-            animation: zoomIn 1s cubic-bezier(0.2, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: scale(0.8) rotateX(20deg);
+            transition: transform 0.1s ease-out, box-shadow 0.5s;
+            animation: levitacion 6s infinite ease-in-out;
         }
 
-        @keyframes zoomIn {
-            to { opacity: 1; transform: scale(1) rotateX(0) rotateY(0); }
+        @keyframes levitacion {
+            0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+            50% { transform: translateY(-15px) rotateX(2deg) rotateY(-2deg); }
         }
 
-        /* === TEXTO GLITCH Y NEÓN === */
+        /* === TEXTOS === */
         .etiqueta-sistema {
-            font-size: 1rem;
-            color: var(--neon-glow-alt);
-            letter-spacing: 4px;
-            margin-bottom: 15px;
-            transform: translateZ(30px); /* Efecto 3D (sale de la pantalla) */
-            text-shadow: 0 0 10px var(--neon-glow-alt);
+            color: var(--neon-glow-alt); font-size: 1rem;
+            letter-spacing: 5px; margin-bottom: 20px;
+            transform: translateZ(40px);
+            text-shadow: 0 0 15px var(--neon-glow-alt);
         }
 
         h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(3rem, 7vw, 7rem);
+            font-size: clamp(2.5rem, 6vw, 6rem);
             font-weight: 900;
-            text-transform: uppercase;
-            position: relative;
-            transform: translateZ(60px); /* Aún más salido de la pantalla */
+            transform: translateZ(80px);
             text-shadow: 0 0 20px var(--neon-glow), 0 0 40px var(--neon-glow);
-            margin-bottom: 40px;
-            min-height: 1.2em;
+            margin-bottom: 40px; min-height: 1.5em;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* === GLITCH CSS === */
-        .glitch-efecto {
-            position: relative;
-        }
+        /* GLITCH */
+        .glitch-efecto { position: relative; }
         .glitch-efecto::before, .glitch-efecto::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.8;
+            content: attr(data-text); position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
         }
         .glitch-efecto::before {
-            left: 3px;
-            text-shadow: -2px 0 red;
+            left: 3px; text-shadow: -2px 0 red;
             animation: glitch-anim 2s infinite linear alternate-reverse;
             clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
         }
         .glitch-efecto::after {
-            left: -3px;
-            text-shadow: -2px 0 blue;
+            left: -3px; text-shadow: -2px 0 blue;
             animation: glitch-anim2 3s infinite linear alternate-reverse;
             clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
         }
 
         @keyframes glitch-anim {
             0% { clip-path: inset(20% 0 80% 0); }
-            20% { clip-path: inset(60% 0 10% 0); }
-            40% { clip-path: inset(40% 0 50% 0); }
-            60% { clip-path: inset(80% 0 5% 0); }
-            80% { clip-path: inset(10% 0 70% 0); }
+            50% { clip-path: inset(60% 0 10% 0); }
             100% { clip-path: inset(30% 0 50% 0); }
         }
         @keyframes glitch-anim2 {
             0% { clip-path: inset(10% 0 60% 0); }
-            20% { clip-path: inset(30% 0 20% 0); }
-            40% { clip-path: inset(70% 0 10% 0); }
-            60% { clip-path: inset(20% 0 50% 0); }
-            80% { clip-path: inset(50% 0 30% 0); }
+            50% { clip-path: inset(30% 0 20% 0); }
             100% { clip-path: inset(5% 0 80% 0); }
         }
 
-        /* === CONTROLES ESTILO CYBERPUNK === */
+        /* === CONTROLES === */
         .controles {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            transform: translateZ(40px);
-            flex-wrap: wrap;
+            display: flex; gap: 20px; justify-content: center;
+            transform: translateZ(50px); flex-wrap: wrap;
         }
 
         select, button {
-            background: transparent;
-            border: 1px solid var(--neon-glow);
-            color: var(--text-main);
-            padding: 15px 30px;
-            font-family: 'Space Mono', monospace;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: none; /* Usa el cursor custom */
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s;
-            box-shadow: 0 0 10px rgba(var(--particle-color), 0.2);
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--ui-color); color: var(--text-main);
+            padding: 15px 25px; font-family: 'Space Mono', monospace;
+            font-size: 1rem; text-transform: uppercase; letter-spacing: 2px;
+            cursor: none; transition: 0.3s;
+            box-shadow: 0 0 10px rgba(0,255,255,0.2);
+            outline: none; backdrop-filter: blur(5px);
         }
 
         select:hover, button:hover {
-            background: var(--neon-glow);
-            color: var(--bg-color);
-            box-shadow: 0 0 30px var(--neon-glow);
-            text-shadow: none;
+            background: var(--ui-color); color: #000;
+            box-shadow: 0 0 30px var(--ui-color);
         }
-
-        select option {
-            background: #000;
-            color: #fff;
-        }
+        
+        select option { background: #050505; color: #fff; }
         [data-theme="light"] select option { background: #fff; color: #000; }
+
+        .indicador-dimension {
+            position: absolute; top: 20px; left: 20px;
+            font-size: 0.9rem; color: var(--ui-color);
+            letter-spacing: 3px; z-index: 100;
+        }
 
     </style>
 </head>
 <body>
 
+    <div class="indicador-dimension" id="texto-dimension">DIMENSIÓN: NEXUS</div>
+
     <div id="cursor-anillo"></div>
     <div id="cursor-punto"></div>
+
+    <!-- Flechas para cambiar de fondo -->
+    <div class="flecha flecha-izq" id="btn-izq">❮</div>
+    <div class="flecha flecha-der" id="btn-der">❯</div>
 
     <canvas id="lienzo-fondo"></canvas>
 
     <div class="perspectiva">
         <div class="tarjeta-dios" id="tarjeta">
-            <div class="etiqueta-sistema">>>> ESTADO_SISTEMA: CONECTADO <<<</div>
+            <div class="etiqueta-sistema">>>> TRANSMISIÓN MULTIVERSAL <<<</div>
             <h1 id="texto-hola" class="glitch-efecto" data-text="¡HOLA, MUNDO!">¡HOLA, MUNDO!</h1>
             
             <div class="controles">
                 <select id="selector-idioma">
-                    <option value="es">ESPAÑOL</option>
-                    <option value="en">INGLÉS</option>
-                    <option value="ja">JAPONÉS</option>
-                    <option value="ru">RUSO</option>
-                    <option value="he">HEBREO</option>
-                    <option value="el">GRIEGO</option>
-                    <option value="binary">BINARIO</option>
-                    <option value="hex">HEXADECIMAL</option>
+                    <optgroup label="Terrestres">
+                        <option value="es">ESPAÑOL</option>
+                        <option value="en">INGLÉS</option>
+                        <option value="ja">JAPONÉS</option>
+                    </optgroup>
+                    <optgroup label="Películas & Ficción">
+                        <option value="pirata">🏴‍☠️ PIRATA</option>
+                        <option value="yoda">🟢 YODA</option>
+                        <option value="groot">🌳 GROOT</option>
+                        <option value="terminator">🤖 TERMINATOR</option>
+                        <option value="matrix">💊 MATRIX</option>
+                        <option value="vader">⚔️ DARTH VADER</option>
+                        <option value="minion">🍌 MINION</option>
+                    </optgroup>
                 </select>
 
-                <button id="boton-tema">INICIAR FASE LUMINOSA</button>
+                <button id="boton-tema">ALTERAR UI</button>
             </div>
         </div>
     </div>
 
     <script>
-        /* =========================================
-           1. CURSOR PERSONALIZADO Y ANIMADO
-        ========================================= */
-        const cursorAnillo = document.getElementById('cursor-anillo');
-        const cursorPunto = document.getElementById('cursor-punto');
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            cursorPunto.style.left = `${mouseX}px`;
-            cursorPunto.style.top = `${mouseY}px`;
-            
-            // Retraso fluido para el anillo
-            setTimeout(() => {
-                cursorAnillo.style.left = `${mouseX}px`;
-                cursorAnillo.style.top = `${mouseY}px`;
-            }, 50);
-        });
-
-        // Efecto hover al tocar elementos interactivos
-        document.querySelectorAll('button, select').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursorAnillo.style.width = '60px';
-                cursorAnillo.style.height = '60px';
-                cursorAnillo.style.background = 'rgba(0,255,255,0.1)';
-            });
-            el.addEventListener('mouseleave', () => {
-                cursorAnillo.style.width = '40px';
-                cursorAnillo.style.height = '40px';
-                cursorAnillo.style.background = 'transparent';
-            });
-        });
-
-        /* =========================================
-           2. EFECTO PARALLAX 3D (TILT) DE LA TARJETA
-        ========================================= */
-        const tarjeta = document.getElementById('tarjeta');
-        
-        window.addEventListener('mousemove', (e) => {
-            let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-            let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-            tarjeta.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        });
-
-        // Resetear al salir el ratón
-        window.addEventListener('mouseleave', () => {
-            tarjeta.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
-
-        /* =========================================
-           3. SISTEMA DE PARTÍCULAS CANVAS (NEXUS)
-        ========================================= */
-        const canvas = document.getElementById('lienzo-fondo');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let particulas = [];
-        const numParticulas = 100; // Cantidad de nodos
-
-        class Particula {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.velX = (Math.random() - 0.5) * 1.5;
-                this.velY = (Math.random() - 0.5) * 1.5;
-                this.radio = Math.random() * 2;
-            }
-            actualizar() {
-                // Rebotar en los bordes
-                if (this.x < 0 || this.x > canvas.width) this.velX *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.velY *= -1;
-                this.x += this.velX;
-                this.y += this.velY;
-            }
-            dibujar(colorRgb) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${colorRgb}, 0.8)`;
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < numParticulas; i++) particulas.push(new Particula());
-
-        function animarCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Obtener el color actual basado en el tema
-            const esClaro = document.body.getAttribute('data-theme') === 'light';
-            const colorRGB = esClaro ? '255, 0, 127' : '0, 255, 255'; // Rosa o Cyan
-
-            for (let i = 0; i < particulas.length; i++) {
-                particulas[i].actualizar();
-                particulas[i].dibujar(colorRGB);
-
-                // Conectar líneas entre partículas cercanas
-                for (let j = i; j < particulas.length; j++) {
-                    const dx = particulas[i].x - particulas[j].x;
-                    const dy = particulas[i].y - particulas[j].y;
-                    const distancia = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distancia < 120) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(${colorRGB}, ${1 - distancia/120})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.moveTo(particulas[i].x, particulas[i].y);
-                        ctx.lineTo(particulas[j].x, particulas[j].y);
-                        ctx.stroke();
-                    }
-                }
-
-                // Interacción de partículas con el ratón (se alejan)
-                const dxRaton = particulas[i].x - mouseX;
-                const dyRaton = particulas[i].y - mouseY;
-                const distRaton = Math.sqrt(dxRaton * dxRaton + dyRaton * dyRaton);
-                if (distRaton < 100) {
-                    particulas[i].x += dxRaton * 0.05;
-                    particulas[i].y += dyRaton * 0.05;
-                }
-            }
-            requestAnimationFrame(animarCanvas);
-        }
-        animarCanvas();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        /* =========================================
-           4. EFECTO HACKER + DICCIONARIO
-        ========================================= */
+        /* === 1. DICCIONARIO ÉPICO === */
         const traducciones = {
             es: "¡HOLA, MUNDO!",
             en: "HELLO, WORLD!",
             ja: "こんにちは世界",
-            ru: "ПРИВЕТ, МИР!",
-            he: "שלום עולם!",
-            el: "ΓΕΙΑ ΣΟΥ ΚΟΣΜΕ!",
-            binary: "01001000 01101111 01101100 01100001",
-            hex: "48 6F 6C 61 20 4D 75 6E 64 6F"
+            pirata: "¡AHOY, MUNDO!",
+            yoda: "¡MUNDO, HOLA A TI!",
+            groot: "YO SOY GROOT.",
+            terminator: "HASTA LA VISTA, MUNDO.",
+            matrix: "DESPIERTA, NEO...",
+            vader: "YO SOY TU MUNDO.",
+            minion: "¡BELLO, PAPAGUENA!"
         };
 
-        const charsAvanzados = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789¡!@#$%&*+<>{}[]日本語ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ";
+        /* === 2. EFECTO HACKER (Desencriptación) === */
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789¡!@#$%&*+<>{}[]日本語ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ";
         const elementoTexto = document.getElementById("texto-hola");
 
         function encriptadoExtremo(textoFinal) {
             let iteraciones = 0;
-            // Actualiza el data-text para que el glitch CSS coincida con la palabra
             elementoTexto.setAttribute('data-text', textoFinal);
-            
             clearInterval(window.efectoIntervalo);
             
             window.efectoIntervalo = setInterval(() => {
-                elementoTexto.innerText = textoFinal
-                    .split("")
-                    .map((letra, index) => {
-                        if (index < iteraciones) return textoFinal[index];
-                        return charsAvanzados[Math.floor(Math.random() * charsAvanzados.length)];
-                    })
-                    .join("");
+                elementoTexto.innerText = textoFinal.split("").map((letra, index) => {
+                    if (index < iteraciones) return textoFinal[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join("");
 
                 if (iteraciones >= textoFinal.length) clearInterval(window.efectoIntervalo);
-                iteraciones += 1 / 4; 
+                iteraciones += 1 / 3; 
             }, 30);
         }
 
-        const selector = document.getElementById("selector-idioma");
-        selector.addEventListener("change", (e) => {
+        // Cambiar idioma
+        document.getElementById("selector-idioma").addEventListener("change", (e) => {
             encriptadoExtremo(traducciones[e.target.value]);
         });
 
-        /* =========================================
-           5. BOTÓN CAMBIO DE MUNDO (TEMA)
-        ========================================= */
-        const botonTema = document.getElementById("boton-tema");
-        
-        botonTema.addEventListener("click", () => {
-            const esOscuro = document.body.getAttribute("data-theme") !== "light";
-            
-            // Explosión de partículas visual
-            for(let i=0; i<30; i++) particulas.push(new Particula());
-            setTimeout(() => { particulas.splice(numParticulas, 30); }, 1000);
+        /* === 3. MOTOR GRÁFICO DEL MULTIVERSO (CANVAS) === */
+        const canvas = document.getElementById('lienzo-fondo');
+        const ctx = canvas.getContext('2d');
+        let w = canvas.width = window.innerWidth;
+        let h = canvas.height = window.innerHeight;
 
-            if (esOscuro) {
-                document.body.setAttribute("data-theme", "light");
-                botonTema.innerText = "INICIAR FASE OSCURA";
-            } else {
-                document.body.removeAttribute("data-theme");
-                botonTema.innerText = "INICIAR FASE LUMINOSA";
+        let dimensionActual = 0; // 0: Nexus, 1: Matrix, 2: Hiperespacio
+        const nombresDimensiones = ["NEXUS NEURONAL", "LLUVIA DIGITAL (MATRIX)", "HIPERESPACIO"];
+        const labelDimension = document.getElementById("texto-dimension");
+
+        window.addEventListener('resize', () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; });
+
+        // --- Variables de cada Dimensión ---
+        // 0. NEXUS
+        let nodos = [];
+        for (let i = 0; i < 80; i++) {
+            nodos.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2 });
+        }
+        
+        // 1. MATRIX
+        const tamanoFuente = 20;
+        const columnas = Math.floor(w / tamanoFuente) + 1; // +1 para cubrir todo el ancho
+        let gotas = [];
+        for (let i = 0; i < columnas; i++) gotas[i] = 1;
+
+        // 2. HIPERESPACIO
+        let estrellas = [];
+        for (let i = 0; i < 400; i++) {
+            estrellas.push({ x: Math.random()*2000 - 1000, y: Math.random()*2000 - 1000, z: Math.random()*2000 });
+        }
+
+        // --- Bucle de Renderizado ---
+        function renderizarFondo() {
+            if (dimensionActual === 0) {
+                // Dimensión NEXUS (Red conectada)
+                ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+                ctx.fillRect(0, 0, w, h);
+                const colorHex = document.body.getAttribute('data-theme') === 'light' ? '255, 0, 127' : '0, 255, 255';
+                
+                nodos.forEach((n, i) => {
+                    n.x += n.vx; n.y += n.vy;
+                    if (n.x < 0 || n.x > w) n.vx *= -1;
+                    if (n.y < 0 || n.y > h) n.vy *= -1;
+                    
+                    ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, Math.PI*2);
+                    ctx.fillStyle = `rgba(${colorHex}, 0.8)`; ctx.fill();
+
+                    // Conectar con otras cercanas
+                    for (let j = i+1; j < nodos.length; j++) {
+                        let d = Math.hypot(n.x - nodos[j].x, n.y - nodos[j].y);
+                        if (d < 150) {
+                            ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(nodos[j].x, nodos[j].y);
+                            ctx.strokeStyle = `rgba(${colorHex}, ${1 - d/150})`;
+                            ctx.lineWidth = 0.5; ctx.stroke();
+                        }
+                    }
+                });
+
+            } else if (dimensionActual === 1) {
+                // Dimensión MATRIX (Lluvia de código verde/rojo)
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Rastro
+                ctx.fillRect(0, 0, w, h);
+                const colorTexto = document.body.getAttribute('data-theme') === 'light' ? '#ff0055' : '#0f0';
+                ctx.fillStyle = colorTexto;
+                ctx.font = tamanoFuente + "px 'Space Mono'";
+
+                for (let i = 0; i < columnas; i++) {
+                    const texto = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(texto, i * tamanoFuente, gotas[i] * tamanoFuente);
+                    if (gotas[i] * tamanoFuente > h && Math.random() > 0.975) gotas[i] = 0;
+                    gotas[i]++;
+                }
+
+            } else if (dimensionActual === 2) {
+                // Dimensión HIPERESPACIO (Warp Speed)
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'; // Ligero rastro para velocidad
+                ctx.fillRect(0, 0, w, h);
+                const cx = w/2, cy = h/2;
+                
+                estrellas.forEach(e => {
+                    e.z -= 15; // Velocidad de la nave
+                    if (e.z <= 0) { e.x = Math.random()*2000-1000; e.y = Math.random()*2000-1000; e.z = 2000; }
+                    
+                    let px = cx + (e.x / e.z) * 1000;
+                    let py = cy + (e.y / e.z) * 1000;
+                    let s = Math.max(0.1, (2000 - e.z) / 500); // Tamaño por cercanía
+                    
+                    ctx.beginPath(); ctx.arc(px, py, s, 0, Math.PI*2);
+                    ctx.fillStyle = '#fff'; ctx.fill();
+                });
             }
-            encriptadoExtremo(traducciones[selector.value]);
+            requestAnimationFrame(renderizarFondo);
+        }
+        renderizarFondo(); // Iniciar motor
+
+        /* === 4. NAVEGACIÓN ENTRE DIMENSIONES (Flechas) === */
+        function cambiarDimension(direccion) {
+            dimensionActual += direccion;
+            if (dimensionActual > 2) dimensionActual = 0;
+            if (dimensionActual < 0) dimensionActual = 2;
+            
+            labelDimension.innerText = "DIMENSIÓN: " + nombresDimensiones[dimensionActual];
+            // Resetea el fondo bruscamente para evitar mezcla fea de efectos
+            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
+            
+            // Reajusta las columnas de Matrix por si se redimensionó la pantalla
+            if (dimensionActual === 1) {
+                 const nuevasColumnas = Math.floor(w / tamanoFuente) + 1;
+                 gotas = Array(nuevasColumnas).fill(1);
+            }
+        }
+
+        document.getElementById("btn-izq").addEventListener("click", () => cambiarDimension(-1));
+        document.getElementById("btn-der").addEventListener("click", () => cambiarDimension(1));
+
+        /* === 5. UI Y PERIFÉRICOS (Cursor, Tilt, Tema) === */
+        const cursorAnillo = document.getElementById('cursor-anillo');
+        const cursorPunto = document.getElementById('cursor-punto');
+        
+        window.addEventListener('mousemove', (e) => {
+            cursorPunto.style.left = e.clientX + 'px';
+            cursorPunto.style.top = e.clientY + 'px';
+            setTimeout(() => {
+                cursorAnillo.style.left = e.clientX + 'px';
+                cursorAnillo.style.top = e.clientY + 'px';
+            }, 60);
+
+            // Parallax Tilt de la tarjeta
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 30;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 30;
+            document.getElementById('tarjeta').style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         });
 
-        // Inicio explosivo
-        window.onload = () => setTimeout(() => encriptadoExtremo(traducciones["es"]), 600);
+        document.querySelectorAll('button, select, .flecha').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorAnillo.style.width = '60px'; cursorAnillo.style.height = '60px';
+                cursorAnillo.style.background = 'rgba(0,255,255,0.2)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorAnillo.style.width = '40px'; cursorAnillo.style.height = '40px';
+                cursorAnillo.style.background = 'transparent';
+            });
+        });
 
+        document.getElementById("boton-tema").addEventListener("click", () => {
+            const body = document.body;
+            body.getAttribute("data-theme") === "light" ? body.removeAttribute("data-theme") : body.setAttribute("data-theme", "light");
+            encriptadoExtremo(traducciones[document.getElementById("selector-idioma").value]);
+        });
+
+        window.onload = () => setTimeout(() => encriptadoExtremo(traducciones["es"]), 500);
     </script>
 </body>
 </html>
