@@ -3,259 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hola Mundo - Edición Épica</title>
+    <title>HOLA MUNDO - NIVEL DIOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Space+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        /* === VARIABLES DE TEMA === */
         :root {
-            --bg-gradient: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --card-border: rgba(255, 255, 255, 0.1);
+            --bg-color: #050505;
+            --card-bg: rgba(10, 10, 20, 0.6);
+            --card-border: rgba(0, 255, 255, 0.3);
             --text-main: #ffffff;
-            --text-glow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.4);
-            --accent: #00f2fe;
+            --neon-glow: #00ffff;
+            --neon-glow-alt: #ff00ff;
+            --particle-color: 0, 255, 255;
         }
 
-        /* Tema Claro */
         [data-theme="light"] {
-            --bg-gradient: linear-gradient(45deg, #ff9a9e, #fecfef, #a1c4fd);
-            --card-bg: rgba(255, 255, 255, 0.4);
-            --card-border: rgba(255, 255, 255, 0.6);
-            --text-main: #1a1a1a;
-            --text-glow: 0 0 15px rgba(255, 255, 255, 0.8);
-            --accent: #ff0844;
+            --bg-color: #f0f4f8;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-border: rgba(255, 0, 128, 0.5);
+            --text-main: #0f0f0f;
+            --neon-glow: #ff007f;
+            --neon-glow-alt: #0055ff;
+            --particle-color: 255, 0, 127;
         }
 
-        /* === RESET Y BASE === */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: var(--bg-gradient);
-            background-size: 400% 400%;
+            background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            animation: moveGradient 15s ease infinite;
-            transition: color 0.5s, background 0.5s;
+            font-family: 'Space Mono', monospace;
+            transition: background-color 0.8s ease;
+            cursor: none; /* Ocultamos el cursor real */
         }
 
-        /* === ANIMACIONES === */
-        @keyframes moveGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* === CURSOR PERSONALIZADO === */
+        #cursor-anillo {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--neon-glow);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.5s;
+            z-index: 9999;
+            box-shadow: 0 0 15px var(--neon-glow);
+        }
+        #cursor-punto {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--text-main);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 10000;
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.5) translateY(100px); opacity: 0; filter: blur(20px); }
-            100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+        /* === FONDO CANVAS (PARTÍCULAS) === */
+        #lienzo-fondo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
 
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+        /* === CONTENEDOR 3D === */
+        .perspectiva {
+            perspective: 1500px;
+            z-index: 10;
         }
 
-        /* === UI PRINCIPAL (GLASSMORPHISM) === */
-        .contenedor-epico {
+        .tarjeta-dios {
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--card-border);
-            border-radius: 30px;
-            padding: 50px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--card-border);
+            border-radius: 20px;
+            padding: 60px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 800px;
-            
-            /* Aquí aplicamos la animación épica de entrada */
-            animation: popIn 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards, floating 6s ease-in-out infinite 1.5s;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(var(--particle-color), 0.1);
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out, box-shadow 0.5s, border-color 0.5s;
+            /* Entrada inicial */
+            animation: zoomIn 1s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: scale(0.8) rotateX(20deg);
         }
 
-        /* === TEXTO CENTRAL === */
+        @keyframes zoomIn {
+            to { opacity: 1; transform: scale(1) rotateX(0) rotateY(0); }
+        }
+
+        /* === TEXTO GLITCH Y NEÓN === */
+        .etiqueta-sistema {
+            font-size: 1rem;
+            color: var(--neon-glow-alt);
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            transform: translateZ(30px); /* Efecto 3D (sale de la pantalla) */
+            text-shadow: 0 0 10px var(--neon-glow-alt);
+        }
+
         h1 {
-            font-size: clamp(3rem, 8vw, 6rem); /* Se adapta al celular o PC */
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 7vw, 7rem);
             font-weight: 900;
-            margin-bottom: 20px;
-            text-shadow: var(--text-glow);
-            letter-spacing: 2px;
-            min-height: 120px; /* Evita saltos al cambiar textos largos */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .etiqueta {
-            font-size: 1.2rem;
             text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-bottom: 10px;
-            opacity: 0.7;
+            position: relative;
+            transform: translateZ(60px); /* Aún más salido de la pantalla */
+            text-shadow: 0 0 20px var(--neon-glow), 0 0 40px var(--neon-glow);
+            margin-bottom: 40px;
+            min-height: 1.2em;
         }
 
-        /* === CONTROLES (Botón y Select) === */
+        /* === GLITCH CSS === */
+        .glitch-efecto {
+            position: relative;
+        }
+        .glitch-efecto::before, .glitch-efecto::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+        .glitch-efecto::before {
+            left: 3px;
+            text-shadow: -2px 0 red;
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        }
+        .glitch-efecto::after {
+            left: -3px;
+            text-shadow: -2px 0 blue;
+            animation: glitch-anim2 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
+        }
+
+        @keyframes glitch-anim {
+            0% { clip-path: inset(20% 0 80% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); }
+            60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(10% 0 70% 0); }
+            100% { clip-path: inset(30% 0 50% 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip-path: inset(10% 0 60% 0); }
+            20% { clip-path: inset(30% 0 20% 0); }
+            40% { clip-path: inset(70% 0 10% 0); }
+            60% { clip-path: inset(20% 0 50% 0); }
+            80% { clip-path: inset(50% 0 30% 0); }
+            100% { clip-path: inset(5% 0 80% 0); }
+        }
+
+        /* === CONTROLES ESTILO CYBERPUNK === */
         .controles {
             display: flex;
             gap: 20px;
             justify-content: center;
-            margin-top: 40px;
+            transform: translateZ(40px);
             flex-wrap: wrap;
         }
 
         select, button {
-            appearance: none;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--card-border);
+            background: transparent;
+            border: 1px solid var(--neon-glow);
             color: var(--text-main);
             padding: 15px 30px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-            font-weight: bold;
-            outline: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: none; /* Usa el cursor custom */
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(var(--particle-color), 0.2);
         }
 
         select:hover, button:hover {
-            background: var(--accent);
-            color: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: var(--neon-glow);
+            color: var(--bg-color);
+            box-shadow: 0 0 30px var(--neon-glow);
             text-shadow: none;
         }
 
-        button:active { transform: translateY(2px); }
-
         select option {
-            background: #24243e; /* Fondo para que se lea en PC */
-            color: white;
+            background: #000;
+            color: #fff;
         }
-        
-        [data-theme="light"] select option {
-            background: #fff;
-            color: black;
-        }
+        [data-theme="light"] select option { background: #fff; color: #000; }
 
-        /* Partículas en el fondo (Opcional, manejado por JS) */
-        .particula {
-            position: absolute;
-            background: var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.5;
-            animation: floating 4s infinite ease-in-out;
-        }
     </style>
 </head>
 <body>
 
-    <div class="contenedor-epico">
-        <p class="etiqueta">INICIANDO SECUENCIA...</p>
-        <h1 id="texto-hola" data-value="¡Hola, Mundo!">¡Hola, Mundo!</h1>
-        
-        <div class="controles">
-            <!-- Selector de Idiomas -->
-            <select id="selector-idioma">
-                <option value="es">🇪🇸 Español</option>
-                <option value="en">🇬🇧 Inglés</option>
-                <option value="ja">🇯🇵 Japonés</option>
-                <option value="ru">🇷🇺 Ruso</option>
-                <option value="zh">🇨🇳 Chino</option>
-                <option value="ar">🇸🇦 Árabe</option>
-                <option value="ko">🇰🇷 Coreano</option>
-                <option value="hi">🇮🇳 Hindi</option>
-                <option value="fr">🇫🇷 Francés</option>
-                <option value="it">🇮🇹 Italiano</option>
-                <option value="de">🇩🇪 Alemán</option>
-                <option value="alien">👽 Alienígena</option>
-            </select>
+    <div id="cursor-anillo"></div>
+    <div id="cursor-punto"></div>
 
-            <!-- Botón Tema -->
-            <button id="boton-tema">☀️ Modo Claro</button>
+    <canvas id="lienzo-fondo"></canvas>
+
+    <div class="perspectiva">
+        <div class="tarjeta-dios" id="tarjeta">
+            <div class="etiqueta-sistema">>>> ESTADO_SISTEMA: CONECTADO <<<</div>
+            <h1 id="texto-hola" class="glitch-efecto" data-text="¡HOLA, MUNDO!">¡HOLA, MUNDO!</h1>
+            
+            <div class="controles">
+                <select id="selector-idioma">
+                    <option value="es">ESPAÑOL</option>
+                    <option value="en">INGLÉS</option>
+                    <option value="ja">JAPONÉS</option>
+                    <option value="ru">RUSO</option>
+                    <option value="he">HEBREO</option>
+                    <option value="el">GRIEGO</option>
+                    <option value="binary">BINARIO</option>
+                    <option value="hex">HEXADECIMAL</option>
+                </select>
+
+                <button id="boton-tema">INICIAR FASE LUMINOSA</button>
+            </div>
         </div>
     </div>
 
     <script>
-        /* === 1. DICCIONARIO DE IDIOMAS === */
+        /* =========================================
+           1. CURSOR PERSONALIZADO Y ANIMADO
+        ========================================= */
+        const cursorAnillo = document.getElementById('cursor-anillo');
+        const cursorPunto = document.getElementById('cursor-punto');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorPunto.style.left = `${mouseX}px`;
+            cursorPunto.style.top = `${mouseY}px`;
+            
+            // Retraso fluido para el anillo
+            setTimeout(() => {
+                cursorAnillo.style.left = `${mouseX}px`;
+                cursorAnillo.style.top = `${mouseY}px`;
+            }, 50);
+        });
+
+        // Efecto hover al tocar elementos interactivos
+        document.querySelectorAll('button, select').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorAnillo.style.width = '60px';
+                cursorAnillo.style.height = '60px';
+                cursorAnillo.style.background = 'rgba(0,255,255,0.1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorAnillo.style.width = '40px';
+                cursorAnillo.style.height = '40px';
+                cursorAnillo.style.background = 'transparent';
+            });
+        });
+
+        /* =========================================
+           2. EFECTO PARALLAX 3D (TILT) DE LA TARJETA
+        ========================================= */
+        const tarjeta = document.getElementById('tarjeta');
+        
+        window.addEventListener('mousemove', (e) => {
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            tarjeta.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // Resetear al salir el ratón
+        window.addEventListener('mouseleave', () => {
+            tarjeta.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        /* =========================================
+           3. SISTEMA DE PARTÍCULAS CANVAS (NEXUS)
+        ========================================= */
+        const canvas = document.getElementById('lienzo-fondo');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particulas = [];
+        const numParticulas = 100; // Cantidad de nodos
+
+        class Particula {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.velX = (Math.random() - 0.5) * 1.5;
+                this.velY = (Math.random() - 0.5) * 1.5;
+                this.radio = Math.random() * 2;
+            }
+            actualizar() {
+                // Rebotar en los bordes
+                if (this.x < 0 || this.x > canvas.width) this.velX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.velY *= -1;
+                this.x += this.velX;
+                this.y += this.velY;
+            }
+            dibujar(colorRgb) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${colorRgb}, 0.8)`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < numParticulas; i++) particulas.push(new Particula());
+
+        function animarCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Obtener el color actual basado en el tema
+            const esClaro = document.body.getAttribute('data-theme') === 'light';
+            const colorRGB = esClaro ? '255, 0, 127' : '0, 255, 255'; // Rosa o Cyan
+
+            for (let i = 0; i < particulas.length; i++) {
+                particulas[i].actualizar();
+                particulas[i].dibujar(colorRGB);
+
+                // Conectar líneas entre partículas cercanas
+                for (let j = i; j < particulas.length; j++) {
+                    const dx = particulas[i].x - particulas[j].x;
+                    const dy = particulas[i].y - particulas[j].y;
+                    const distancia = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distancia < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(${colorRGB}, ${1 - distancia/120})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particulas[i].x, particulas[i].y);
+                        ctx.lineTo(particulas[j].x, particulas[j].y);
+                        ctx.stroke();
+                    }
+                }
+
+                // Interacción de partículas con el ratón (se alejan)
+                const dxRaton = particulas[i].x - mouseX;
+                const dyRaton = particulas[i].y - mouseY;
+                const distRaton = Math.sqrt(dxRaton * dxRaton + dyRaton * dyRaton);
+                if (distRaton < 100) {
+                    particulas[i].x += dxRaton * 0.05;
+                    particulas[i].y += dyRaton * 0.05;
+                }
+            }
+            requestAnimationFrame(animarCanvas);
+        }
+        animarCanvas();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        /* =========================================
+           4. EFECTO HACKER + DICCIONARIO
+        ========================================= */
         const traducciones = {
-            es: "¡Hola, Mundo!",
-            en: "Hello, World!",
+            es: "¡HOLA, MUNDO!",
+            en: "HELLO, WORLD!",
             ja: "こんにちは世界",
-            ru: "Привет, мир!",
-            zh: "你好，世界！",
-            ar: "مرحبا بالعالم!",
-            ko: "안녕, 세상아!",
-            hi: "नमस्ते दुनिया!",
-            fr: "Bonjour le monde!",
-            it: "Ciao, Mondo!",
-            de: "Hallo, Welt!",
-            alien: "⏃⌰⟟⟒⋏ ⍙⍜⍀⌰⎅!"
+            ru: "ПРИВЕТ, МИР!",
+            he: "שלום עולם!",
+            el: "ΓΕΙΑ ΣΟΥ ΚΟΣΜΕ!",
+            binary: "01001000 01101111 01101100 01100001",
+            hex: "48 6F 6C 61 20 4D 75 6E 64 6F"
         };
 
-        /* === 2. EFECTO MATRIX / HACKER (LO ÉPICO) === */
-        const letrasMagicas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+<>{}";
+        const charsAvanzados = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789¡!@#$%&*+<>{}[]日本語ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ";
         const elementoTexto = document.getElementById("texto-hola");
 
-        function desencriptarTexto(textoFinal) {
+        function encriptadoExtremo(textoFinal) {
             let iteraciones = 0;
-            const intervalo = setInterval(() => {
+            // Actualiza el data-text para que el glitch CSS coincida con la palabra
+            elementoTexto.setAttribute('data-text', textoFinal);
+            
+            clearInterval(window.efectoIntervalo);
+            
+            window.efectoIntervalo = setInterval(() => {
                 elementoTexto.innerText = textoFinal
                     .split("")
                     .map((letra, index) => {
-                        // Si la iteración ya pasó esta letra, muestra la real
-                        if (index < iteraciones) {
-                            return textoFinal[index];
-                        }
-                        // Si no, muestra un caracter aleatorio
-                        return letrasMagicas[Math.floor(Math.random() * letrasMagicas.length)];
+                        if (index < iteraciones) return textoFinal[index];
+                        return charsAvanzados[Math.floor(Math.random() * charsAvanzados.length)];
                     })
                     .join("");
 
-                // Controla la velocidad del efecto (mientras más suba, más rápido se forma la palabra)
-                if (iteraciones >= textoFinal.length) {
-                    clearInterval(intervalo);
-                }
-                iteraciones += 1 / 3; // Modifica este número para hacerlo más lento o rápido
-            }, 30); // 30ms de refresco
+                if (iteraciones >= textoFinal.length) clearInterval(window.efectoIntervalo);
+                iteraciones += 1 / 4; 
+            }, 30);
         }
 
-        /* === 3. EVENTO: CAMBIO DE IDIOMA === */
         const selector = document.getElementById("selector-idioma");
         selector.addEventListener("change", (e) => {
-            const idioma = e.target.value;
-            const nuevaFrase = traducciones[idioma];
-            desencriptarTexto(nuevaFrase);
+            encriptadoExtremo(traducciones[e.target.value]);
         });
 
-        /* === 4. EVENTO: MODO CLARO / OSCURO === */
+        /* =========================================
+           5. BOTÓN CAMBIO DE MUNDO (TEMA)
+        ========================================= */
         const botonTema = document.getElementById("boton-tema");
         
         botonTema.addEventListener("click", () => {
             const esOscuro = document.body.getAttribute("data-theme") !== "light";
             
+            // Explosión de partículas visual
+            for(let i=0; i<30; i++) particulas.push(new Particula());
+            setTimeout(() => { particulas.splice(numParticulas, 30); }, 1000);
+
             if (esOscuro) {
                 document.body.setAttribute("data-theme", "light");
-                botonTema.innerText = "🌙 Modo Oscuro";
+                botonTema.innerText = "INICIAR FASE OSCURA";
             } else {
                 document.body.removeAttribute("data-theme");
-                botonTema.innerText = "☀️ Modo Claro";
+                botonTema.innerText = "INICIAR FASE LUMINOSA";
             }
-            // Lanzamos el efecto hacker también al cambiar de tema para más espectacularidad
-            desencriptarTexto(traducciones[selector.value]);
+            encriptadoExtremo(traducciones[selector.value]);
         });
 
-        /* === 5. DISPARAR ANIMACIÓN AL ENTRAR === */
-        window.onload = () => {
-            // Un pequeño retraso para que la tarjeta haga su animación de entrada antes del texto
-            setTimeout(() => {
-                desencriptarTexto(traducciones["es"]);
-            }, 500);
-        };
+        // Inicio explosivo
+        window.onload = () => setTimeout(() => encriptadoExtremo(traducciones["es"]), 600);
+
     </script>
 </body>
 </html>
