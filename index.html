@@ -72,6 +72,28 @@
             100% { opacity: 1; text-shadow: 0 0 25px rgba(0,255,255,1); }
         }
 
+        /* === APAGÓN / EXPLOSIÓN === */
+        #pantalla-explosion {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 999999; opacity: 0; pointer-events: none;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        #pantalla-explosion.activo {
+            opacity: 1; pointer-events: auto;
+        }
+        .mensaje-final {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: #ff0055; text-shadow: 0 0 30px #ff0055, 0 0 60px #ff0055;
+            letter-spacing: 6px; opacity: 0; transform: scale(0.5);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+        .mensaje-final.visible {
+            opacity: 1; transform: scale(1);
+        }
+
         /* === CURSOR === */
         #cursor-anillo {
             position: fixed; width: 40px; height: 40px;
@@ -191,6 +213,11 @@
         <div class="porcentaje-texto" id="porcentaje">0%</div>
     </div>
 
+    <!-- PANTALLA DE EXPLOSIÓN / APAGÓN -->
+    <div id="pantalla-explosion">
+        <div class="mensaje-final" id="texto-final">YA NO HAY HOLA MUNDO</div>
+    </div>
+
     <div class="indicador-dimension" id="texto-dimension">1/8: NEXUS NEURONAL</div>
 
     <div id="cursor-anillo"></div>
@@ -307,13 +334,16 @@
             encriptar(traducciones[idiomaActual]);
         });
 
-        /* === 8 FONDOS INTERACTIVOS (OMNIMOTOR) === */
+        /* === 8 FONDOS INTERACTIVOS (OMNIMOTOR) + CONTADOR DE EXPLOSIÓN === */
         const canvas = document.getElementById('lienzo-fondo');
         const ctx = canvas.getContext('2d');
         let w = canvas.width = window.innerWidth;
         let h = canvas.height = window.innerHeight;
 
         let dimensionActual = 0;
+        let contadorCambios = 0; // Cuenta cuántas veces cambia de fondo
+        let juegoTerminado = false;
+
         const nombres = [
             "NEXUS NEURONAL", "MATRIX LLUVIA", "HIPERESPACIO", 
             "VÓRTICE CUÁNTICO", "FLUIDO MAGNÉTICO", "LLUVIA DE METEORITOS", 
@@ -351,6 +381,7 @@
         initDimension();
 
         function renderizar() {
+            if (juegoTerminado) return;
             const esClaro = document.body.getAttribute('data-theme') === 'light';
             
             if (dimensionActual === 0) {
@@ -474,6 +505,8 @@
 
         const lblDim = document.getElementById("texto-dimension");
         function cambiarDimension(dir) {
+            if (juegoTerminado) return;
+            
             dimensionActual += dir;
             if (dimensionActual > 7) dimensionActual = 0;
             if (dimensionActual < 0) dimensionActual = 7;
@@ -481,7 +514,33 @@
             ctx.fillStyle = document.body.getAttribute('data-theme') === 'light' ? '#fff' : '#000';
             ctx.fillRect(0, 0, w, h);
             initDimension();
+
+            // Sistema de sobrecarga: si cambia 6 veces de fondo, explota todo
+            contadorCambios++;
+            if (contadorCambios >= 6) {
+                juegoTerminado = true;
+                dispararExplosionFinal();
+            }
         }
+
+        function dispararExplosionFinal() {
+            const pantallaExp = document.getElementById("pantalla-explosion");
+            const textoFinal = document.getElementById("texto-final");
+            
+            pantallaExp.classList.add("activo");
+
+            // Flash de explosión inicial con destello blanco breve
+            setTimeout(() => {
+                pantallaExp.style.background = "#ffffff";
+                setTimeout(() => {
+                    pantallaExp.style.background = "#000000";
+                    setTimeout(() => {
+                        textoFinal.classList.add("visible");
+                    }, 1000);
+                }, 150);
+            }, 300);
+        }
+
         document.getElementById("btn-izq").addEventListener("click", () => cambiarDimension(-1));
         document.getElementById("btn-der").addEventListener("click", () => cambiarDimension(1));
     </script>
