@@ -3,77 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejemplo HTML, CSS y JS</title>
-    
-    <!-- CSS: Se encarga del diseño, los colores y la presentación -->
+    <title>Hola Mundo - Edición Épica</title>
     <style>
+        /* === VARIABLES DE TEMA === */
+        :root {
+            --bg-gradient: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-glow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.4);
+            --accent: #00f2fe;
+        }
+
+        /* Tema Claro */
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(45deg, #ff9a9e, #fecfef, #a1c4fd);
+            --card-bg: rgba(255, 255, 255, 0.4);
+            --card-border: rgba(255, 255, 255, 0.6);
+            --text-main: #1a1a1a;
+            --text-glow: 0 0 15px rgba(255, 255, 255, 0.8);
+            --accent: #ff0844;
+        }
+
+        /* === RESET Y BASE === */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            animation: moveGradient 15s ease infinite;
+            transition: color 0.5s, background 0.5s;
+        }
+
+        /* === ANIMACIONES === */
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5) translateY(100px); opacity: 0; filter: blur(20px); }
+            100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* === UI PRINCIPAL (GLASSMORPHISM) === */
+        .contenedor-epico {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 800px;
+            
+            /* Aquí aplicamos la animación épica de entrada */
+            animation: popIn 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards, floating 6s ease-in-out infinite 1.5s;
+        }
+
+        /* === TEXTO CENTRAL === */
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem); /* Se adapta al celular o PC */
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: var(--text-glow);
+            letter-spacing: 2px;
+            min-height: 120px; /* Evita saltos al cambiar textos largos */
+            display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f9;
-            color: #333;
-            /* Esta transición hace que el cambio de color sea suave */
-            transition: background-color 0.4s, color 0.4s; 
         }
 
-        /* Esta clase se activará usando JavaScript */
-        .modo-oscuro {
-            background-color: #1a1a1a;
-            color: #f0f0f0;
+        .etiqueta {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+            opacity: 0.7;
         }
 
-        button {
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
+        /* === CONTROLES (Botón y Select) === */
+        .controles {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        select, button {
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
             cursor: pointer;
-            border: none;
-            border-radius: 8px;
-            background-color: #0066cc;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            outline: none;
+        }
+
+        select:hover, button:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            text-shadow: none;
+        }
+
+        button:active { transform: translateY(2px); }
+
+        select option {
+            background: #24243e; /* Fondo para que se lea en PC */
             color: white;
-            transition: transform 0.1s, background-color 0.3s;
+        }
+        
+        [data-theme="light"] select option {
+            background: #fff;
+            color: black;
         }
 
-        button:hover {
-            background-color: #004c99;
-        }
-
-        button:active {
-            transform: scale(0.95);
+        /* Partículas en el fondo (Opcional, manejado por JS) */
+        .particula {
+            position: absolute;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.5;
+            animation: floating 4s infinite ease-in-out;
         }
     </style>
 </head>
 <body>
 
-    <!-- HTML: Se encarga de la estructura y el contenido -->
-    <h1>¡Hola, Mundo!</h1>
-    <p>Haz clic en el botón para ver la magia de JavaScript.</p>
-    <button id="botonTema">Activar Modo Oscuro</button>
+    <div class="contenedor-epico">
+        <p class="etiqueta">INICIANDO SECUENCIA...</p>
+        <h1 id="texto-hola" data-value="¡Hola, Mundo!">¡Hola, Mundo!</h1>
+        
+        <div class="controles">
+            <!-- Selector de Idiomas -->
+            <select id="selector-idioma">
+                <option value="es">🇪🇸 Español</option>
+                <option value="en">🇬🇧 Inglés</option>
+                <option value="ja">🇯🇵 Japonés</option>
+                <option value="ru">🇷🇺 Ruso</option>
+                <option value="zh">🇨🇳 Chino</option>
+                <option value="ar">🇸🇦 Árabe</option>
+                <option value="ko">🇰🇷 Coreano</option>
+                <option value="hi">🇮🇳 Hindi</option>
+                <option value="fr">🇫🇷 Francés</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="de">🇩🇪 Alemán</option>
+                <option value="alien">👽 Alienígena</option>
+            </select>
 
-    <!-- JavaScript: Se encarga de la lógica y la interactividad -->
+            <!-- Botón Tema -->
+            <button id="boton-tema">☀️ Modo Claro</button>
+        </div>
+    </div>
+
     <script>
-        // 1. Seleccionamos los elementos de la página
-        const boton = document.getElementById('botonTema');
-        const cuerpoPagina = document.body;
+        /* === 1. DICCIONARIO DE IDIOMAS === */
+        const traducciones = {
+            es: "¡Hola, Mundo!",
+            en: "Hello, World!",
+            ja: "こんにちは世界",
+            ru: "Привет, мир!",
+            zh: "你好，世界！",
+            ar: "مرحبا بالعالم!",
+            ko: "안녕, 세상아!",
+            hi: "नमस्ते दुनिया!",
+            fr: "Bonjour le monde!",
+            it: "Ciao, Mondo!",
+            de: "Hallo, Welt!",
+            alien: "⏃⌰⟟⟒⋏ ⍙⍜⍀⌰⎅!"
+        };
 
-        // 2. Le decimos al botón qué hacer cuando alguien haga clic en él
-        boton.addEventListener('click', function() {
-            // Alternamos la clase 'modo-oscuro' en el cuerpo de la página
-            cuerpoPagina.classList.toggle('modo-oscuro');
+        /* === 2. EFECTO MATRIX / HACKER (LO ÉPICO) === */
+        const letrasMagicas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+<>{}";
+        const elementoTexto = document.getElementById("texto-hola");
 
-            // 3. Cambiamos el texto del botón dependiendo del modo actual
-            if (cuerpoPagina.classList.contains('modo-oscuro')) {
-                boton.textContent = 'Activar Modo Claro';
-            } else {
-                boton.textContent = 'Activar Modo Oscuro';
-            }
+        function desencriptarTexto(textoFinal) {
+            let iteraciones = 0;
+            const intervalo = setInterval(() => {
+                elementoTexto.innerText = textoFinal
+                    .split("")
+                    .map((letra, index) => {
+                        // Si la iteración ya pasó esta letra, muestra la real
+                        if (index < iteraciones) {
+                            return textoFinal[index];
+                        }
+                        // Si no, muestra un caracter aleatorio
+                        return letrasMagicas[Math.floor(Math.random() * letrasMagicas.length)];
+                    })
+                    .join("");
+
+                // Controla la velocidad del efecto (mientras más suba, más rápido se forma la palabra)
+                if (iteraciones >= textoFinal.length) {
+                    clearInterval(intervalo);
+                }
+                iteraciones += 1 / 3; // Modifica este número para hacerlo más lento o rápido
+            }, 30); // 30ms de refresco
+        }
+
+        /* === 3. EVENTO: CAMBIO DE IDIOMA === */
+        const selector = document.getElementById("selector-idioma");
+        selector.addEventListener("change", (e) => {
+            const idioma = e.target.value;
+            const nuevaFrase = traducciones[idioma];
+            desencriptarTexto(nuevaFrase);
         });
-    </script>
 
+        /* === 4. EVENTO: MODO CLARO / OSCURO === */
+        const botonTema = document.getElementById("boton-tema");
+        
+        botonTema.addEventListener("click", () => {
+            const esOscuro = document.body.getAttribute("data-theme") !== "light";
+            
+            if (esOscuro) {
+                document.body.setAttribute("data-theme", "light");
+                botonTema.innerText = "🌙 Modo Oscuro";
+            } else {
+                document.body.removeAttribute("data-theme");
+                botonTema.innerText = "☀️ Modo Claro";
+            }
+            // Lanzamos el efecto hacker también al cambiar de tema para más espectacularidad
+            desencriptarTexto(traducciones[selector.value]);
+        });
+
+        /* === 5. DISPARAR ANIMACIÓN AL ENTRAR === */
+        window.onload = () => {
+            // Un pequeño retraso para que la tarjeta haga su animación de entrada antes del texto
+            setTimeout(() => {
+                desencriptarTexto(traducciones["es"]);
+            }, 500);
+        };
+    </script>
 </body>
 </html>
