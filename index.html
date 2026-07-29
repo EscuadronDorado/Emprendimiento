@@ -3,38 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOLA MUNDO - OMNIVERSO DEFINITIVO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Space+Mono&display=swap" rel="stylesheet">
-    
+    <title>Equipo 2: Objetivos y Actividades de las Empresas</title>
     <style>
         :root {
-            --bg-color: #030303;
-            --card-bg: rgba(10, 15, 30, 0.4);
-            --card-border: rgba(0, 255, 255, 0.3);
-            --text-main: #ffffff;
-            --neon-glow: #00ffff;
-            --neon-glow-alt: #ff0055;
-            --ui-color: #00ffff;
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --bg-dark: #0f172a;
+            --text-light: #f8fafc;
+            --text-dark: #334155;
+            --card-bg: #ffffff;
         }
 
-        [data-theme="light"] {
-            --bg-color: #f0f0f5;
-            --card-bg: rgba(255, 255, 255, 0.6);
-            --card-border: rgba(255, 0, 128, 0.5);
-            --text-main: #0a0a0a;
-            --neon-glow: #ff007f;
-            --neon-glow-alt: #0022ff;
-            --ui-color: #ff007f;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: var(--bg-color); color: var(--text-main);
-            min-height: 100vh; display: flex;
-            justify-content: center; align-items: center;
-            overflow: hidden; font-family: 'Space Mono', monospace;
-            cursor: none; user-select: none;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Animación de Bienvenida Inicial */
+        #welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeOutWelcome 1s ease 3.5s forwards;
+        }
+
+        .welcome-content h1 {
+            font-size: 3rem;
+            color: var(--text-light);
+            text-align: center;
+            opacity: 0;
+            animation: fadeInText 1.5s ease 0.5s forwards;
+        }
+
+        .welcome-content p {
+            font-size: 1.5rem;
+            color: var(--accent);
+            text-align: center;
+            margin-top: 15px;
+            opacity: 0;
+            animation: fadeInText 1.5s ease 1.5s forwards;
+        }
+
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOutWelcome {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* Botón de Login Arriba a la Derecha */
+        .login-btn-container {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .btn-login {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .btn-login:hover {
+            background-color: #d97706;
+            transform: scale(1.05);
+        }
+
+        /* Modal de Login */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            padding: 30px;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .modal-content h3 { margin-bottom: 20px; color: var(--primary); }
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .modal-content button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .modal-content button:hover { background: var(--secondary); }
+        .close-modal { float: right; cursor: pointer; font-size: 1.2rem; color: #64748b; }
+
+        /* Contenedor de la Presentación */
+        .presentation-container {
+            width: 85%;
+            max-width: 1000px;
+            height: 75vh;
+            background: var(--card-bg);
+            color: var(--text-dark);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            position: relative;
+            opacity: 0;
+            animation: fadeInApp 1s ease 4s forwards;
+        }
+
+        @keyframes fadeInApp {
+            to { opacity: 1; }
+        }
+
+        .slide {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            justify-content: flex-start;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide h2 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 8px;
+        }
+
+        .slide-body {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            flex-grow: 1;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .card-box {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .card-box h4 { color: var(--primary); margin-bottom: 8px; }
+
+        /* Controles de Navegación */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+
+        .nav-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover { background: var(--secondary); }
+        .nav-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        #slide-counter {
+            font-weight: bold;
+            color: #64748b;
+        }
+
+        /* Notas para el Expositor (Protegidas por Login) */
+        .speaker-notes {
+            margin-top: 15px;
+            background: #fffbeb;
+            border: 1px dashed var(--accent);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #b45309;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animación de Bienvenida -->
+    <div id="welcome-screen">
+        <div class="welcome-content">
+            <h1>Trabajo en Equipo: Equipo 2</h1>
+            <p>Objetivos y Actividades de las Empresas</p>
+        </div>
+    </div>
+
+    <!-- Botón Login -->
+    <div class="login-btn-container">
+        <button class="btn-login" onclick="openLogin()">🔒 Login Expositor</button>
+    </div>
+
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeLogin()">&times;</span>
+            <h3>Acceso de Expositor</h3>
+            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Introduce las credenciales para ver las notas secretas de exposición.</p>
+            <input type="text" id="userInput" placeholder="Usuario">
+            <input type="password" id="passInput" placeholder="Contraseña">
+            <button onclick="validateLogin()">Ingresar</button>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal de la Presentación -->
+    <div class="presentation-container">
+        
+        <!-- Diapositiva 1 -->
+        <div class="slide active" data-slide="1">
+            <h2>1. Introducción al Tema</h2>
+            <div class="slide-body">
+                <p>Bienvenidos compañeros. Hoy como **Equipo 2** abordaremos uno de los pilares fundamentales del mundo económico y organizacional: **Los Objetivos y las Actividades de las Empresas**.</p>
+                <br>
+                <div class="grid-2">
+                    <div class="card-box">
+                        <h4>¿Qué es una empresa?</h4>
+                        <p>Es una organización social formada por personas, capital y trabajo que busca alcanzar objetivos específicos mediante la producción de bienes o servicios.</p>
+                    </div>
+                    <div class="card-box">
+                        <h4>Nuestro Propósito</h4>
+                        <p>Comprender hacia dónde se dirigen las empresas corporativamente (sus metas) y qué rol cumplen en la cadena productiva global.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="speaker-notes" id="note-1">
+                🗣️ **Nota de exposición:** Saluden al profesor y compañeros. Aclaren que una empresa no solo busca ganar dinero, sino cumplir un rol organizado en la sociedad.
+            </div>
+        </div>
+
+        <!-- Diapositiva 2 -->
+        <div class="slide" data-slide="2">
+            <h2>2. Objetivos Económicos y Financieros</h2>
+            <div class="slide-body">
+                <p>Toda organización mercantil nace con metas de carácter económico que garantizan su viabilidad en el tiempo:</p>
+                <br>
+                <ul>
+                    <li><strong>Maximización de Beneficios:</strong> Obtener ganancias netas que recompensen el riesgo y la inversión de los dueños o accionistas.</li>
+                    <li><strong>Supervivencia y Crecimiento:</strong> Mantenerse operativas frente a la competencia y expandir su cuota de mercado año tras año.</li>
+                    <li><strong>Eficiencia Financiera:</strong> Optimizar los costos de producción para conseguir un rendimiento superior del capital invertido.</li>
+                </ul>
+            </div>
+            <div class="speaker-notes" id="note-2">
+                🗣️ **Nota de exposición:** Expliquen que sin dinero o beneficios ninguna empresa sobrevive a largo plazo, por lo que este es el motor principal.
+            </div>
+        </div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide" data-slide="3">
+            <h2>3. Objetivos Sociales y Sostenibles</h2>
+            <div class="slide-body">
+                <p>En el siglo XXI, las empresas modernas ya no solo miran sus bolsillos, sino su impacto en el entorno:</p>
+                <br>
+                <div class="grid-2">
+                    <div class="card-box">
+                        <h4>Objetivos Sociales</h4>
+                        <p>Satisfacer las demandas reales del consumidor, ofrecer empleos dignos, seguros y fomentar el bienestar dentro de la comunidad local.</p>
+                    </div>
+                    <div class="card-box">
+                        <h4>Sostenibilidad Ecológica</h4>
+                        <p>Reducir la huella de carbono, utilizar energías renovables, reciclar insumos y aplicar políticas de Responsabilidad Social Empresarial (RSE).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="speaker-notes" id="note-3">
+                🗣️ **Nota de exposición:** Destaquen la importancia de la ecología hoy en día. Una empresa que daña el medio ambiente hoy pierde clientes y reputación.
+            </div>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide" data-slide="4">
+            <h2>4. Las Actividades: Sectores Económicos</h2>
+            <div class="slide-body">
+                <p>Para cumplir sus objetivos, las empresas desarrollan actividades productivas divididas tradicionalmente en tres sectores:</p>
+                <br>
+                <ul>
+                    <li>🌾 <strong>Sector Primario:</strong> Obtención de recursos directamente de la naturaleza (Agricultura, ganadería, pesca, minería).</li>
+                    <li>🏭 <strong>Sector Secundario:</strong> Transformación industrial de materias primas en bienes de consumo o industriales (Fábricas, construcción).</li>
+                    <li>🛍️ <strong>Sector Terciario:</strong> Prestación de servicios intangibles y comercio (Comercio minorista/mayorista, transporte, turismo, salud, educación).</li>
+                </ul>
+            </div>
+            <div class="speaker-notes" id="note-4">
+                🗣️ **Nota de exposición:** Mencionen que la economía funciona como una cadena conectada: el primario extrae, el secundario transforma y el terciario vende o distribuye.
+            </div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide" data-slide="5">
+            <h2>5. Sectores Avanzados: Cuaternario y Quinario</h2>
+            <div class="slide-body">
+                <p>Las economías modernas han evolucionado incorporando dos nuevos sectores esenciales:</p>
+                <br>
+                <div class="grid-2">
+                    <div class="card-box">
+                        <h4>Sector Cuaternario</h4>
+                        <p>Basado en la economía del conocimiento y la alta tecnología: investigación científica, desarrollo de software, biotecnología y servicios de información.</p>
+                    </div>
+                    <div class="card-box">
+                        <h4>Sector Quinario</h4>
+                        <p>Actividades sin fines de lucro, cultura, entretenimiento masivo, artes, hotelería de lujo y la alta dirección o gobernanza gubernamental.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="speaker-notes" id="note-5">
+                🗣️ **Nota de exposición:** Este es un detalle avanzado que impresionará al profesor. Expliquen que hoy las empresas de software o investigación son las que más crecen.
+            </div>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide" data-slide="6">
+            <h2>6. Ejemplos Prácticos y Conclusión</h2>
+            <div class="slide-body">
+                <p><strong>Ejemplos concretos analizados:</strong></p>
+                <ul>
+                    <li>*Agrícola del Sur:* Sector Primario (producción de frutas con metas de sostenibilidad).</li>
+                    <li>*Industrias TextilMax:* Sector Secundario (confección de indumentaria minimizando el desperdicio textil).</li>
+                    <li>*Logística Global Express:* Sector Terciario (distribución de mercancías y satisfacción del cliente).</li>
+                </ul>
+                <br>
+                <p style="background: #e2e8f0; padding: 10px; border-radius: 6px;">💡 <strong>Reflexión Final:</strong> Las empresas son motores vitales. Sin objetivos claros navegan sin rumbo, y sin actividades eficientes no pueden sostener a la sociedad.</p>
+            </div>
+            <div class="speaker-notes" id="note-6">
+                🗣️ **Nota de exposición:** Cierren agradeciendo a todos por la atención y abran el espacio para las preguntas de sus compañeros.
+            </div>
+        </div>
+
+        <!-- Controles de Navegación -->
+        <div class="nav-controls">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>Anterior</button>
+            <span id="slide-counter">Diapositiva 1 de 6</span>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente</button>
+        </div>
+
+    </div>
+
+    <!-- Script de Funcionalidad -->
+    <script>
+        // CONFIGURACIÓN DE USUARIO Y CONTRASEÑA PARA EL LOGIN
+        const ADMIN_USER = "equipo2";
+        const ADMIN_PASS = "exposicion2026";
+
+        let currentSlide = 1;
+        const totalSlides = 6;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            document.querySelector(`.slide[data-slide="${currentSlide}"]`).classList.add('active');
+
+            // Actualizar botones y contador
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+            document.getElementById('slide-counter').innerText = `Diapositiva ${currentSlide} de ${totalSlides}`;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        // Funciones del Modal de Login
+        function openLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeLogin() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function validateLogin() {
+            const user = document.getElementById('userInput').value;
+            const pass = document.getElementById('passInput').value;
+
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                alert("¡Acceso concedido! Se han revelado las notas del expositor.");
+                document.querySelectorAll('.speaker-notes').forEach(note => note.style.display = 'block');
+                closeLogin();
+            } else {
+                alert("Usuario o contraseña incorrectos.");
+            }
+        }
+
+        // Cerrar modal si hacen click fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('loginModal');
+            if (event.target == modal) {
+                closeLogin();
+            }
+        }
+    </script>
+</body>
+</html>            cursor: none; user-select: none;
             transition: background-color 0.5s ease;
         }
 
