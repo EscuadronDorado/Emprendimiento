@@ -233,31 +233,11 @@
     </div>
 
     <script>
-        /* === ANIMACIÓN DE CARGA INICIAL === */
-        let progreso = 0;
-        const barra = document.getElementById('barra');
-        const porcentajeTxt = document.getElementById('porcentaje');
-        const pantallaCarga = document.getElementById('pantalla-carga');
-
-        const intervaloCarga = setInterval(() => {
-            progreso += Math.floor(Math.random() * 8) + 3; // Sube aleatoriamente
-            if (progreso >= 100) {
-                progreso = 100;
-                clearInterval(intervaloCarga);
-                setTimeout(() => {
-                    pantallaCarga.classList.add('oculto');
-                    encriptar("¡HOLA, MUNDO!"); // Dispara texto al terminar
-                }, 300);
-            }
-            barra.style.width = progreso + '%';
-            porcentajeTxt.innerText = progreso + '%';
-        }, 40);
-
         /* === DICCIONARIO === */
         const traducciones = {
             es: "¡HOLA, MUNDO!", en: "HELLO, WORLD!", yoda: "¡MUNDO, HOLA A TI!",
             vader: "YO SOY TU MUNDO.", matrix: "DESPIERTA, NEO...", terminator: "HASTA LA VISTA, MUNDO.",
-            groot: "YO SOY GROOT.", pirata: "¡AHOY, MUNDO!", minion: "¡BELLO, PAPOI TENES!",
+            groot: "YO SOY GROOT.", pirata: "¡AHOY, MUNDO!", minion: "¡BELLO, PAPAGUENA!",
             elfico: "MAE GOVANNEN, AMBAR!", homer: "¡MUNDO... ROSquillas...", zurg: "¡RINDETE, MUNDO!",
             balrog: "¡NO PASARÁS, MUNDO!", ultron: "NO HAY SALVACIÓN, MUNDO."
         };
@@ -266,7 +246,8 @@
         const txtEl = document.getElementById("texto-hola");
 
         function encriptar(textoFinal) {
-            let i = 0; txtEl.setAttribute('data-text', textoFinal);
+            let i = 0; 
+            txtEl.setAttribute('data-text', textoFinal);
             clearInterval(window.efectoGlitch);
             window.efectoGlitch = setInterval(() => {
                 txtEl.innerText = textoFinal.split("").map((l, ind) => ind < i ? textoFinal[ind] : chars[Math.floor(Math.random() * chars.length)]).join("");
@@ -274,9 +255,33 @@
                 i += 1 / 3; 
             }, 30);
         }
-        document.getElementById("selector-idioma").addEventListener("change", (e) => encriptar(traducciones[e.target.value]));
 
-        /* === MOUSE Y TILT === */
+        /* === ANIMACIÓN DE CARGA INICIAL === */
+        let progreso = 0;
+        const barra = document.getElementById('barra');
+        const porcentajeTxt = document.getElementById('porcentaje');
+        const pantallaCarga = document.getElementById('pantalla-carga');
+
+        const intervaloCarga = setInterval(() => {
+            progreso += Math.floor(Math.random() * 10) + 5; 
+            if (progreso >= 100) {
+                progreso = 100;
+                clearInterval(intervaloCarga);
+                setTimeout(() => {
+                    pantallaCarga.classList.add('oculto');
+                    encriptar("¡HOLA, MUNDO!"); 
+                }, 300);
+            }
+            barra.style.width = progreso + '%';
+            porcentajeTxt.innerText = progreso + '%';
+        }, 30);
+
+        /* === EVENTOS UI === */
+        document.getElementById("selector-idioma").addEventListener("change", (e) => {
+            encriptar(traducciones[e.target.value]);
+        });
+
+        /* === MOUSE Y TILT 3D === */
         let mx = window.innerWidth / 2, my = window.innerHeight / 2;
         const cAnillo = document.getElementById('cursor-anillo'), cPunto = document.getElementById('cursor-punto');
         
@@ -298,12 +303,11 @@
         document.getElementById("boton-tema").addEventListener("click", () => {
             const body = document.body;
             body.getAttribute("data-theme") === "light" ? body.removeAttribute("data-theme") : body.setAttribute("data-theme", "light");
-            encriptar(traducciones[document.getElementById("selector-idioma").value]);
+            const idiomaActual = document.getElementById("selector-idioma").value;
+            encriptar(traducciones[idiomaActual]);
         });
 
-        /* =========================================================
-           8 FONDOS INTERACTIVOS DEFINITIVOS (OMNIMOTOR)
-        ========================================================= */
+        /* === 8 FONDOS INTERACTIVOS (OMNIMOTOR) === */
         const canvas = document.getElementById('lienzo-fondo');
         const ctx = canvas.getContext('2d');
         let w = canvas.width = window.innerWidth;
@@ -323,24 +327,24 @@
         function initDimension() {
             nodos = []; gotas = []; estrellas = []; particulasVortice = []; nodosMalla = []; meteoritos = []; cadenasDNA = []; plasmas = [];
             
-            if (dimensionActual === 0) { // Nexus
+            if (dimensionActual === 0) {
                 for (let i = 0; i < 100; i++) nodos.push({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2 });
-            } else if (dimensionActual === 1) { // Matrix
+            } else if (dimensionActual === 1) {
                 const cols = Math.floor(w / 20) + 1;
                 for (let i = 0; i < cols; i++) gotas[i] = Math.random() * -100;
-            } else if (dimensionActual === 2) { // Hiperespacio
+            } else if (dimensionActual === 2) {
                 for (let i = 0; i < 500; i++) estrellas.push({ x: Math.random()*3000-1500, y: Math.random()*3000-1500, z: Math.random()*2000 });
-            } else if (dimensionActual === 3) { // Vórtice
+            } else if (dimensionActual === 3) {
                 for (let i = 0; i < 300; i++) particulasVortice.push({ ang: Math.random()*Math.PI*2, radio: Math.random()*Math.max(w,h), vel: (Math.random()*0.02)+0.005, tam: Math.random()*3 });
-            } else if (dimensionActual === 4) { // Fluido
+            } else if (dimensionActual === 4) {
                 for (let x = 0; x < w; x += 40) {
                     for (let y = 0; y < h; y += 40) nodosMalla.push({ ox: x, oy: y, x: x, y: y, vx: 0, vy: 0 });
                 }
-            } else if (dimensionActual === 5) { // 6. Meteoritos (NUEVO)
+            } else if (dimensionActual === 5) {
                 for (let i = 0; i < 70; i++) meteoritos.push({ x: Math.random()*w, y: Math.random()*h - h, l: Math.random()*80 + 20, v: Math.random()*5 + 3 });
-            } else if (dimensionActual === 6) { // 7. ADN Cibernético (NUEVO)
+            } else if (dimensionActual === 6) {
                 for (let i = 0; i < 25; i++) cadenasDNA.push({ x: (w / 25) * i, y: Math.random()*h, sp: Math.random()*0.05 + 0.02, offset: Math.random()*10 });
-            } else if (dimensionActual === 7) { // 8. Campos de Plasma (NUEVO)
+            } else if (dimensionActual === 7) {
                 for (let i = 0; i < 40; i++) plasmas.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*100 + 50, vx: (Math.random()-0.5)*1.5, vy: (Math.random()-0.5)*1.5 });
             }
         }
@@ -423,53 +427,42 @@
                 });
             }
             else if (dimensionActual === 5) {
-                /* --- 6. METEORITOS EN LLAMAS (Interactividad: Desvían su trayectoria si el cursor se cruza) --- */
                 ctx.fillStyle = esClaro ? 'rgba(240, 245, 255, 0.2)' : 'rgba(5, 5, 15, 0.2)';
                 ctx.fillRect(0, 0, w, h);
                 const colMet = esClaro ? '#0055ff' : '#00ffff';
                 meteoritos.forEach(m => {
                     m.y += m.v; m.x += m.v * 0.5;
                     if (m.y > h || m.x > w) { m.y = -50; m.x = Math.random() * w; }
-                    
                     let distRat = Math.hypot(m.x - mx, m.y - my);
-                    if (distRat < 120) { m.x += 5; m.y -= 5; } // Se apartan del cursor
-
+                    if (distRat < 120) { m.x += 5; m.y -= 5; }
                     ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(m.x - m.l, m.y - m.l);
                     ctx.strokeStyle = colMet; ctx.lineWidth = 2; ctx.stroke();
                 });
             }
             else if (dimensionActual === 6) {
-                /* --- 7. ADN CIBERNÉTICO (Interactividad: Las cadenas se expanden hacia el ratón) --- */
                 ctx.fillStyle = esClaro ? '#fff' : '#020205';
                 ctx.fillRect(0, 0, w, h);
                 const colDNA = esClaro ? '#ff007f' : '#ff0055';
-                cadd => cadenasDNA;
                 cadenasDNA.forEach(d => {
                     d.y += 2; if (d.y > h) d.y = 0;
                     let freq = Math.sin(d.y * 0.02 + d.offset) * 40;
                     let posX = d.x + freq;
-                    
                     let distRat = Math.hypot(posX - mx, d.y - my);
-                    if (distRat < 100) posX += (posX > mx) ? 30 : -30; // Se abren paso
-
+                    if (distRat < 100) posX += (posX > mx) ? 30 : -30;
                     ctx.beginPath(); ctx.arc(posX, d.y, 3, 0, Math.PI*2);
                     ctx.fillStyle = colDNA; ctx.fill();
                 });
             }
             else if (dimensionActual === 7) {
-                /* --- 8. CAMPOS DE PLASMA (Interactividad: Burbujas energéticas que flotan y se agrupan alrededor del ratón) --- */
                 ctx.fillStyle = esClaro ? 'rgba(230, 230, 240, 0.3)' : 'rgba(0, 0, 0, 0.3)';
                 ctx.fillRect(0, 0, w, h);
                 const colPlasma = esClaro ? '#7f00ff' : '#9900ff';
                 plasmas.forEach(p => {
                     p.x += p.vx; p.y += p.vy;
                     if (p.x < 0 || p.x > w) p.vx *= -1; if (p.y < 0 || p.y > h) p.vy *= -1;
-
-                    // Atraídos ligeramente hacia el ratón
                     let dx = mx - p.x, dy = my - p.y;
                     let dist = Math.hypot(dx, dy);
                     if (dist < 300) { p.x += dx * 0.01; p.y += dy * 0.01; }
-
                     ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
                     ctx.strokeStyle = colPlasma; ctx.lineWidth = 1.5; ctx.stroke();
                 });
@@ -485,367 +478,6 @@
             if (dimensionActual > 7) dimensionActual = 0;
             if (dimensionActual < 0) dimensionActual = 7;
             lblDim.innerText = `${dimensionActual + 1}/8: ${nombres[dimensionActual]}`;
-            ctx.fillStyle = document.body.getAttribute('data-theme') === 'light' ? '#fff' : '#000';
-            ctx.fillRect(0, 0, w, h);
-            initDimension();
-        }
-        document.getElementById("btn-izq").addEventListener("click", () => cambiarDimension(-1));
-        document.getElementById("btn-der").addEventListener("click", () => cambiarDimension(1));
-    </script>
-</body>
-</html>            cursor: none; user-select: none;
-            transition: background-color 0.5s ease;
-        }
-
-        /* === CURSOR === */
-        #cursor-anillo {
-            position: fixed; width: 40px; height: 40px;
-            border: 2px solid var(--ui-color); border-radius: 50%;
-            pointer-events: none; transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s; z-index: 9999;
-            box-shadow: 0 0 10px var(--ui-color);
-        }
-        #cursor-punto {
-            position: fixed; width: 6px; height: 6px;
-            background: var(--text-main); border-radius: 50%;
-            pointer-events: none; transform: translate(-50%, -50%); z-index: 10000;
-        }
-
-        /* === UI / FLECHAS === */
-        .flecha {
-            position: fixed; top: 50%; transform: translateY(-50%);
-            font-size: 3rem; color: rgba(128,128,128,0.5);
-            cursor: none; z-index: 100; padding: 20px;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .flecha-izq { left: 20px; } .flecha-der { right: 20px; }
-        .flecha:hover {
-            color: var(--ui-color); text-shadow: 0 0 20px var(--ui-color);
-            transform: translateY(-50%) scale(1.3);
-        }
-
-        .indicador-dimension {
-            position: absolute; top: 25px; left: 25px;
-            font-size: 1rem; color: var(--ui-color);
-            letter-spacing: 4px; z-index: 100; font-weight: bold;
-            text-shadow: 0 0 10px var(--ui-color);
-        }
-
-        /* === CANVAS FONDO === */
-        #lienzo-fondo {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; z-index: 0;
-        }
-
-        /* === CONTENEDOR CENTRAL 3D === */
-        .perspectiva { perspective: 1500px; z-index: 10; pointer-events: none; }
-        
-        .tarjeta-dios {
-            pointer-events: auto;
-            background: var(--card-bg); backdrop-filter: blur(12px);
-            border: 1px solid var(--card-border); border-radius: 15px;
-            padding: 50px 70px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(128,128,128,0.2);
-            transform-style: preserve-3d;
-            transition: transform 0.1s;
-        }
-
-        .etiqueta-sistema {
-            color: var(--neon-glow-alt); font-size: 1rem;
-            letter-spacing: 5px; margin-bottom: 20px;
-            transform: translateZ(30px);
-            text-shadow: 0 0 15px var(--neon-glow-alt);
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 900;
-            transform: translateZ(60px);
-            text-shadow: 0 0 20px var(--neon-glow), 0 0 40px var(--neon-glow);
-            margin-bottom: 40px; min-height: 1.5em;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* GLITCH */
-        .glitch-efecto { position: relative; }
-        .glitch-efecto::before, .glitch-efecto::after {
-            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; opacity: 0.8;
-        }
-        .glitch-efecto::before {
-            left: 4px; text-shadow: -2px 0 red;
-            animation: glitch 2s infinite linear alternate-reverse;
-            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-        }
-        .glitch-efecto::after {
-            left: -4px; text-shadow: -2px 0 blue;
-            animation: glitch2 3s infinite linear alternate-reverse;
-            clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
-        }
-        @keyframes glitch { 0% { clip-path: inset(20% 0 80% 0); } 50% { clip-path: inset(60% 0 10% 0); } 100% { clip-path: inset(30% 0 50% 0); } }
-        @keyframes glitch2 { 0% { clip-path: inset(10% 0 60% 0); } 50% { clip-path: inset(30% 0 20% 0); } 100% { clip-path: inset(5% 0 80% 0); } }
-
-        /* CONTROLES */
-        .controles {
-            display: flex; gap: 20px; justify-content: center;
-            transform: translateZ(40px); flex-wrap: wrap;
-        }
-        select, button {
-            background: rgba(0,0,0,0.3); border: 1px solid var(--ui-color);
-            color: var(--text-main); padding: 12px 25px;
-            font-family: 'Space Mono', monospace; font-size: 1rem;
-            text-transform: uppercase; letter-spacing: 2px;
-            cursor: none; transition: 0.3s;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5); outline: none;
-        }
-        select:hover, button:hover {
-            background: var(--ui-color); color: #000;
-            box-shadow: 0 0 30px var(--ui-color);
-        }
-        select option { background: #000; color: #fff; }
-        [data-theme="light"] select option { background: #fff; color: #000; }
-    </style>
-</head>
-<body>
-
-    <div class="indicador-dimension" id="texto-dimension">1/5: NEXUS NEURONAL</div>
-
-    <div id="cursor-anillo"></div>
-    <div id="cursor-punto"></div>
-
-    <div class="flecha flecha-izq" id="btn-izq">❮</div>
-    <div class="flecha flecha-der" id="btn-der">❯</div>
-
-    <canvas id="lienzo-fondo"></canvas>
-
-    <div class="perspectiva">
-        <div class="tarjeta-dios" id="tarjeta">
-            <div class="etiqueta-sistema">>>> SECTOR MULTIVERSAL DE CINE <<<</div>
-            <h1 id="texto-hola" class="glitch-efecto" data-text="¡HOLA, MUNDO!">¡HOLA, MUNDO!</h1>
-            
-            <div class="controles">
-                <select id="selector-idioma">
-                    <optgroup label="🌐 Oficiales">
-                        <option value="es">ESPAÑOL</option>
-                        <option value="en">INGLÉS</option>
-                    </optgroup>
-                    <optgroup label="🎬 Películas & Series Épicas">
-                        <option value="yoda">🟢 YODA (Star Wars)</option>
-                        <option value="vader">⚔️ DARTH VADER (Star Wars)</option>
-                        <option value="matrix">💊 NEO (Matrix)</option>
-                        <option value="terminator">🤖 TERMINATOR</option>
-                        <option value="groot">🌳 GROOT (Guardianes de la Galaxia)</option>
-                        <option value="pirata">🏴‍☠️ PIRATA (Piratas del Caribe)</option>
-                        <option value="minion">🍌 MINION (Mi Villano Favorito)</option>
-                        <option value="elfico">🧝 ÉLFICO (El Señor de los Anillos)</option>
-                        <option value="homer">🍩 HOMER SIMPSON</option>
-                        <option value="zurg">🦖 EMPERADOR ZURG (Toy Story)</option>
-                        <option value="balrog">🔥 BALROG (LOTR)</option>
-                        <option value="ultron">💀 ULTRÓN (Marvel)</option>
-                    </optgroup>
-                </select>
-                <button id="boton-tema">ALTERAR REALIDAD</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        /* === DICCIONARIO DE CINE Y FICCIÓN === */
-        const traducciones = {
-            es: "¡HOLA, MUNDO!",
-            en: "HELLO, WORLD!",
-            yoda: "¡MUNDO, HOLA A TI!",
-            vader: "YO SOY TU MUNDO.",
-            matrix: "DESPIERTA, NEO...",
-            terminator: "HASTA LA VISTA, MUNDO.",
-            groot: "YO SOY GROOT.",
-            pirata: "¡AHOY, MUNDO!",
-            minion: "¡BELLO, PAPAGUENA!",
-            elfico: "MAE GOVANNEN, AMBAR!",
-            homer: "¡MUNDO... ROSquillas...",
-            zurg: "¡RINDETE, MUNDO!",
-            balrog: "¡NO PASARÁS, MUNDO!",
-            ultron: "NO HAY SALVACIÓN, MUNDO."
-        };
-
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+日本語ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ";
-        const txtEl = document.getElementById("texto-hola");
-
-        function encriptar(textoFinal) {
-            let i = 0; txtEl.setAttribute('data-text', textoFinal);
-            clearInterval(window.efectoGlitch);
-            window.efectoGlitch = setInterval(() => {
-                txtEl.innerText = textoFinal.split("").map((l, ind) => ind < i ? textoFinal[ind] : chars[Math.floor(Math.random() * chars.length)]).join("");
-                if (i >= textoFinal.length) clearInterval(window.efectoGlitch);
-                i += 1 / 3; 
-            }, 30);
-        }
-        document.getElementById("selector-idioma").addEventListener("change", (e) => encriptar(traducciones[e.target.value]));
-        window.onload = () => setTimeout(() => encriptar("¡HOLA, MUNDO!"), 500);
-
-        /* === RATÓN Y TILT 3D === */
-        let mx = window.innerWidth / 2, my = window.innerHeight / 2;
-        const cAnillo = document.getElementById('cursor-anillo'), cPunto = document.getElementById('cursor-punto');
-        
-        window.addEventListener('mousemove', (e) => {
-            mx = e.clientX; my = e.clientY;
-            cPunto.style.left = mx + 'px'; cPunto.style.top = my + 'px';
-            setTimeout(() => { cAnillo.style.left = mx + 'px'; cAnillo.style.top = my + 'px'; }, 50);
-            
-            let xA = (window.innerWidth / 2 - mx) / 40;
-            let yA = (window.innerHeight / 2 - my) / 40;
-            document.getElementById('tarjeta').style.transform = `rotateY(${xA}deg) rotateX(${yA}deg)`;
-        });
-
-        document.querySelectorAll('button, select, .flecha').forEach(el => {
-            el.addEventListener('mouseenter', () => { cAnillo.style.width = '60px'; cAnillo.style.height = '60px'; });
-            el.addEventListener('mouseleave', () => { cAnillo.style.width = '40px'; cAnillo.style.height = '40px'; });
-        });
-
-        document.getElementById("boton-tema").addEventListener("click", () => {
-            const body = document.body;
-            body.getAttribute("data-theme") === "light" ? body.removeAttribute("data-theme") : body.setAttribute("data-theme", "light");
-            encriptar(traducciones[document.getElementById("selector-idioma").value]);
-        });
-
-        /* === 5 FONDOS INTERACTIVOS (OMNIMOTOR) === */
-        const canvas = document.getElementById('lienzo-fondo');
-        const ctx = canvas.getContext('2d');
-        let w = canvas.width = window.innerWidth;
-        let h = canvas.height = window.innerHeight;
-
-        let dimensionActual = 0;
-        const nombres = ["NEXUS NEURONAL", "MATRIX LLUVIA", "HIPERESPACIO", "VÓRTICE CUÁNTICO", "FLUIDO MAGNÉTICO"];
-        
-        window.addEventListener('resize', () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; initDimension(); });
-
-        let nodos = [], gotas = [], estrellas = [], particulasVortice = [], nodosMalla = [];
-
-        function initDimension() {
-            nodos = []; gotas = []; estrellas = []; particulasVortice = []; nodosMalla = [];
-            if (dimensionActual === 0) {
-                for (let i = 0; i < 100; i++) nodos.push({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2 });
-            } else if (dimensionActual === 1) {
-                const cols = Math.floor(w / 20) + 1;
-                for (let i = 0; i < cols; i++) gotas[i] = Math.random() * -100;
-            } else if (dimensionActual === 2) {
-                for (let i = 0; i < 500; i++) estrellas.push({ x: Math.random()*3000-1500, y: Math.random()*3000-1500, z: Math.random()*2000 });
-            } else if (dimensionActual === 3) {
-                for (let i = 0; i < 300; i++) particulasVortice.push({ ang: Math.random()*Math.PI*2, radio: Math.random()*Math.max(w,h), vel: (Math.random()*0.02)+0.005, tam: Math.random()*3 });
-            } else if (dimensionActual === 4) {
-                for (let x = 0; x < w; x += 40) {
-                    for (let y = 0; y < h; y += 40) nodosMalla.push({ ox: x, oy: y, x: x, y: y, vx: 0, vy: 0 });
-                }
-            }
-        }
-        initDimension();
-
-        function renderizar() {
-            const esClaro = document.body.getAttribute('data-theme') === 'light';
-            
-            if (dimensionActual === 0) {
-                ctx.fillStyle = esClaro ? 'rgba(240, 240, 245, 1)' : 'rgba(3, 3, 3, 1)';
-                ctx.fillRect(0, 0, w, h);
-                const colBase = esClaro ? '255, 0, 127' : '0, 255, 255';
-                
-                nodos.forEach((n, i) => {
-                    let dxM = n.x - mx, dyM = n.y - my;
-                    let distM = Math.hypot(dxM, dyM);
-                    if (distM < 150) { n.x += dxM*0.03; n.y += dyM*0.03; }
-
-                    n.x += n.vx; n.y += n.vy;
-                    if (n.x < 0 || n.x > w) n.vx *= -1;
-                    if (n.y < 0 || n.y > h) n.vy *= -1;
-                    
-                    ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, Math.PI*2);
-                    ctx.fillStyle = `rgba(${colBase}, 0.8)`; ctx.fill();
-
-                    for (let j = i+1; j < nodos.length; j++) {
-                        let d = Math.hypot(n.x - nodos[j].x, n.y - nodos[j].y);
-                        if (d < 120) {
-                            ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(nodos[j].x, nodos[j].y);
-                            ctx.strokeStyle = `rgba(${colBase}, ${1 - d/120})`;
-                            ctx.lineWidth = 0.5; ctx.stroke();
-                        }
-                    }
-                });
-            } 
-            else if (dimensionActual === 1) {
-                ctx.fillStyle = esClaro ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)';
-                ctx.fillRect(0, 0, w, h);
-                const colTexto = esClaro ? '#cc0000' : '#00ff00';
-                ctx.font = "20px 'Space Mono'";
-
-                for (let i = 0; i < gotas.length; i++) {
-                    const txt = chars[Math.floor(Math.random() * chars.length)];
-                    let xPos = i * 20, yPos = gotas[i] * 20;
-                    let distRat = Math.hypot(xPos - mx, yPos - my);
-                    if (distRat < 100) {
-                        ctx.fillStyle = esClaro ? '#000' : '#fff';
-                        ctx.shadowBlur = 10; ctx.shadowColor = ctx.fillStyle;
-                    } else {
-                        ctx.fillStyle = colTexto; ctx.shadowBlur = 0;
-                    }
-                    ctx.fillText(txt, xPos, yPos);
-                    if (yPos > h && Math.random() > 0.97) gotas[i] = 0;
-                    gotas[i] += distRat < 100 ? 0.2 : 1;
-                }
-                ctx.shadowBlur = 0;
-            } 
-            else if (dimensionActual === 2) {
-                ctx.fillStyle = esClaro ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)';
-                ctx.fillRect(0, 0, w, h);
-                const colEstrella = esClaro ? '#000' : '#0ff';
-                
-                estrellas.forEach(e => {
-                    e.z -= 20; 
-                    if (e.z <= 0) { e.x = Math.random()*3000-1500; e.y = Math.random()*3000-1500; e.z = 2000; }
-                    let px = mx + (e.x / e.z) * 800;
-                    let py = my + (e.y / e.z) * 800;
-                    let s = Math.max(0.1, (2000 - e.z) / 400); 
-                    ctx.beginPath(); ctx.arc(px, py, s, 0, Math.PI*2);
-                    ctx.fillStyle = colEstrella; ctx.fill();
-                });
-            }
-            else if (dimensionActual === 3) {
-                ctx.fillStyle = esClaro ? 'rgba(255, 240, 240, 0.1)' : 'rgba(10, 0, 20, 0.1)';
-                ctx.fillRect(0, 0, w, h);
-                
-                particulasVortice.forEach(p => {
-                    p.ang += p.vel; p.radio -= 1;
-                    if (p.radio < 1) p.radio = Math.max(w,h);
-                    let x = mx + Math.cos(p.ang) * p.radio;
-                    let y = my + Math.sin(p.ang) * p.radio;
-                    ctx.beginPath(); ctx.arc(x, y, p.tam, 0, Math.PI*2);
-                    let alpha = 1 - (p.radio / Math.max(w,h));
-                    ctx.fillStyle = esClaro ? `rgba(0, 0, 255, ${alpha})` : `rgba(255, 0, 255, ${alpha})`;
-                    ctx.fill();
-                });
-            }
-            else if (dimensionActual === 4) {
-                ctx.fillStyle = esClaro ? '#fff' : '#050505';
-                ctx.fillRect(0, 0, w, h);
-                const colMalla = esClaro ? '#ff8800' : '#ffff00';
-                
-                nodosMalla.forEach(n => {
-                    n.vx += (n.ox - n.x) * 0.05; n.vy += (n.oy - n.y) * 0.05;
-                    let dx = n.x - mx, dy = n.y - my;
-                    if (Math.hypot(dx, dy) < 150) { n.vx += dx * 0.02; n.vy += dy * 0.02; }
-                    n.vx *= 0.85; n.vy *= 0.85;
-                    n.x += n.vx; n.y += n.vy;
-                    ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, Math.PI*2);
-                    ctx.fillStyle = colMalla; ctx.fill();
-                });
-            }
-            requestAnimationFrame(renderizar);
-        }
-        renderizar();
-
-        const lblDim = document.getElementById("texto-dimension");
-        function cambiarDimension(dir) {
-            dimensionActual += dir;
-            if (dimensionActual > 4) dimensionActual = 0;
-            if (dimensionActual < 0) dimensionActual = 4;
-            lblDim.innerText = `${dimensionActual + 1}/5: ${nombres[dimensionActual]}`;
             ctx.fillStyle = document.body.getAttribute('data-theme') === 'light' ? '#fff' : '#000';
             ctx.fillRect(0, 0, w, h);
             initDimension();
