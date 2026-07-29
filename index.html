@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOLA MUNDO - DIONISIO PUTO</title>
+    <title>HOLA MUNDO - OMNIVERSO DEFINITIVO</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Space+Mono&display=swap" rel="stylesheet">
     
     <style>
@@ -72,23 +72,53 @@
             100% { opacity: 1; text-shadow: 0 0 25px rgba(0,255,255,1); }
         }
 
-        /* === APAGÓN / EXPLOSIÓN === */
+        /* === EXPLOSIÓN ESTILO MINECRAFT (PIXEL ART / FUEGO / HUMO) === */
         #pantalla-explosion {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; z-index: 999999; opacity: 0; pointer-events: none;
+            background: transparent; z-index: 999999; pointer-events: none;
             display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.5s ease;
+            overflow: hidden;
         }
         #pantalla-explosion.activo {
-            opacity: 1; pointer-events: auto;
+            pointer-events: auto;
         }
+
+        /* Canvas de Partículas de Explosión */
+        #canvas-explosion {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+        }
+
+        /* Destello Blanco Inicial */
+        .flash-inicial {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; opacity: 0; z-index: 3; pointer-events: none;
+        }
+        .flash-inicial.activar {
+            animation: flashMinecraft 0.4s ease-out forwards;
+        }
+        @keyframes flashMinecraft {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Fondo Negro Permanente post-explosión */
+        .capa-negra {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000; opacity: 0; z-index: 1; transition: opacity 0.3s ease;
+        }
+        .capa-negra.activa {
+            opacity: 1;
+        }
+
+        /* Texto Final Estilo Blocky / Minecraft */
         .mensaje-final {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 5vw, 4rem);
-            color: #ff0055; text-shadow: 0 0 30px #ff0055, 0 0 60px #ff0055;
-            letter-spacing: 6px; opacity: 0; transform: scale(0.5);
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center;
+            font-size: clamp(2rem, 6vw, 4.5rem);
+            color: #ff3300; 
+            text-shadow: 4px 4px 0px #000000, 0 0 20px #ff0000, 0 0 40px #ff5500;
+            letter-spacing: 6px; opacity: 0; transform: scale(3);
+            z-index: 10; text-align: center;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .mensaje-final.visible {
             opacity: 1; transform: scale(1);
@@ -213,8 +243,11 @@
         <div class="porcentaje-texto" id="porcentaje">0%</div>
     </div>
 
-    <!-- PANTALLA DE EXPLOSIÓN / APAGÓN -->
+    <!-- PANTALLA DE EXPLOSIÓN TIPO MINECRAFT -->
     <div id="pantalla-explosion">
+        <div class="capa-negra" id="capa-negra"></div>
+        <div class="flash-inicial" id="flash"></div>
+        <canvas id="canvas-explosion"></canvas>
         <div class="mensaje-final" id="texto-final">YA NO HAY HOLA MUNDO</div>
     </div>
 
@@ -264,7 +297,7 @@
         const traducciones = {
             es: "¡HOLA, MUNDO!", en: "HELLO, WORLD!", yoda: "¡MUNDO, HOLA A TI!",
             vader: "YO SOY TU MUNDO.", matrix: "DESPIERTA, NEO...", terminator: "HASTA LA VISTA, MUNDO.",
-            groot: "YO SOY GROOT.", pirata: "¡AHOY, MUNDO!", minion: "¡BELLO, PAPOI GRANDE!",
+            groot: "YO SOY GROOT.", pirata: "¡AHOY, MUNDO!", minion: "¡BELLO, PAPAGUENA!",
             elfico: "MAE GOVANNEN, AMBAR!", homer: "¡MUNDO... ROSquillas...", zurg: "¡RINDETE, MUNDO!",
             balrog: "¡NO PASARÁS, MUNDO!", ultron: "NO HAY SALVACIÓN, MUNDO."
         };
@@ -334,14 +367,14 @@
             encriptar(traducciones[idiomaActual]);
         });
 
-        /* === 8 FONDOS INTERACTIVOS (OMNIMOTOR) + CONTADOR DE EXPLOSIÓN === */
+        /* === 8 FONDOS INTERACTIVOS + EXPLOSIÓN BRUTA ESTILO MINECRAFT === */
         const canvas = document.getElementById('lienzo-fondo');
         const ctx = canvas.getContext('2d');
         let w = canvas.width = window.innerWidth;
         let h = canvas.height = window.innerHeight;
 
         let dimensionActual = 0;
-        let contadorCambios = 0; // Cuenta cuántas veces cambia de fondo
+        let contadorCambios = 0; 
         let juegoTerminado = false;
 
         const nombres = [
@@ -515,30 +548,88 @@
             ctx.fillRect(0, 0, w, h);
             initDimension();
 
-            // Sistema de sobrecarga: si cambia 6 veces de fondo, explota todo
             contadorCambios++;
             if (contadorCambios >= 6) {
                 juegoTerminado = true;
-                dispararExplosionFinal();
+                dispararExplosionMinecraft();
             }
         }
 
-        function dispararExplosionFinal() {
+        /* === MOTOR DE EXPLOSIÓN TIPO MINECRAFT (PIXELES/CUBOS DE FUEGO) === */
+        function dispararExplosionMinecraft() {
             const pantallaExp = document.getElementById("pantalla-explosion");
+            const flash = document.getElementById("flash");
+            const capaNegra = document.getElementById("capa-negra");
             const textoFinal = document.getElementById("texto-final");
-            
-            pantallaExp.classList.add("activo");
+            const canvasExp = document.getElementById("canvas-explosion");
+            const ctxExp = canvasExp.getContext("2d");
 
-            // Flash de explosión inicial con destello blanco breve
-            setTimeout(() => {
-                pantallaExp.style.background = "#ffffff";
-                setTimeout(() => {
-                    pantallaExp.style.background = "#000000";
+            pantallaExp.classList.add("activo");
+            flash.classList.add("activar");
+
+            let cw = canvasExp.width = window.innerWidth;
+            let ch = canvasExp.height = window.innerHeight;
+
+            // Generar cubos/partículas estilo explosión de TNT de Minecraft (naranja, amarillo, rojo, marrón oscuro)
+            let cubosExplosion = [];
+            let centroX = cw / 2;
+            let centroY = ch / 2;
+            let coloresMinecraft = ["#ff3300", "#ff6600", "#ffcc00", "#992200", "#ff9900", "#441100"];
+
+            for (let i = 0; i < 400; i++) {
+                let angulo = Math.random() * Math.PI * 2;
+                let velocidad = Math.random() * 25 + 5;
+                cubosExplosion.push({
+                    x: centroX,
+                    y: centroY,
+                    vx: Math.cos(angulo) * velocidad,
+                    vy: Math.sin(angulo) * velocidad,
+                    tam: Math.random() * 18 + 8, // Cubos grandes estilo bloque
+                    color: coloresMinecraft[Math.floor(Math.random() * coloresMinecraft.length)],
+                    gravedad: 0.4,
+                    rotacion: Math.random() * Math.PI,
+                    vRot: (Math.random() - 0.5) * 0.3
+                });
+            }
+
+            function animarExplosion() {
+                ctxExp.clearRect(0, 0, cw, ch);
+
+                let activas = false;
+                cubosExplosion.forEach(c => {
+                    c.x += c.vx;
+                    c.y += c.vy;
+                    c.vy += c.gravedad;
+                    c.rotacion += c.vRot;
+                    c.tam *= 0.98; // Se van achicando levemente
+
+                    if (c.tam > 0.5) {
+                        activas = true;
+                        ctxExp.save();
+                        ctxExp.translate(c.x, c.y);
+                        ctxExp.rotate(c.rotacion);
+                        ctxExp.fillStyle = c.color;
+                        // Dibujar como un bloque cuadrado (estilo pixel de Minecraft)
+                        ctxExp.fillRect(-c.tam / 2, -c.tam / 2, c.tam, c.tam);
+                        ctxExp.strokeStyle = "#000000";
+                        ctxExp.lineWidth = 1.5;
+                        ctxExp.strokeRect(-c.tam / 2, -c.tam / 2, c.tam, c.tam);
+                        ctxExp.restore();
+                    }
+                });
+
+                if (activas) {
+                    requestAnimationFrame(animarExplosion);
+                } else {
+                    // Una vez terminada la lluvia de cubos, se pone todo completamente negro
+                    capaNegra.classList.add("activa");
                     setTimeout(() => {
                         textoFinal.classList.add("visible");
-                    }, 1000);
-                }, 150);
-            }, 300);
+                    }, 400);
+                }
+            }
+
+            requestAnimationFrame(animarExplosion);
         }
 
         document.getElementById("btn-izq").addEventListener("click", () => cambiarDimension(-1));
